@@ -9,6 +9,10 @@ class AuthorizationController extends GetxController {
   final RxnString errorMessage = RxnString();
   bool _isRequesting = false; // Prevent concurrent requests
 
+  /// Tracks if user skipped authorization (for development without Apple approval)
+  static bool _authorizationSkipped = false;
+  static bool get isAuthorizationSkipped => _authorizationSkipped;
+
   @override
   void onInit() {
     super.onInit();
@@ -54,5 +58,12 @@ class AuthorizationController extends GetxController {
       isLoading.value = false;
       _isRequesting = false;
     }
+  }
+
+  /// Skip authorization for development purposes (when Apple hasn't approved FamilyControls yet)
+  void skipAuthorization() {
+    _authorizationSkipped = true;
+    isAuthorized.value = false;
+    Get.offAllNamed('/home');
   }
 }

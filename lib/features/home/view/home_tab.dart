@@ -6,6 +6,7 @@ import '../widgets/active_session_card.dart';
 import '../widgets/start_session_card.dart';
 import '../widgets/today_stats_summary.dart';
 import '../../../data/models/focus_session.dart';
+import '../../authorization/controller/authorization_controller.dart';
 
 class HomeTab extends GetView<HomeController> {
   const HomeTab({super.key});
@@ -26,7 +27,15 @@ class HomeTab extends GetView<HomeController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context, isDark),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16),
+              
+              // Show authorization warning banner if skipped
+              if (AuthorizationController.isAuthorizationSkipped) ...[
+                _buildAuthorizationBanner(context, isDark),
+                const SizedBox(height: 16),
+              ],
+              
+              const SizedBox(height: 8),
               Obx(() => controller.isSessionActive.value
                 ? const ActiveSessionCard()
                 : const StartSessionCard()
@@ -39,6 +48,46 @@ class HomeTab extends GetView<HomeController> {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildAuthorizationBanner(BuildContext context, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.orange.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.orange.withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 24),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Screen Time Not Authorized',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Focus session features are disabled. Grant permission in Settings > Screen Time.',
+                  style: TextStyle(
+                    color: isDark ? Colors.white70 : Colors.black54,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

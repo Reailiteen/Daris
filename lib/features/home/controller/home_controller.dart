@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:get/get.dart';
 import '../../../data/services/focus_flow_service.dart';
 import '../../../data/models/focus_session.dart';
+import '../../authorization/controller/authorization_controller.dart';
 
 class HomeController extends GetxController {
   final FocusFlowService _service = Get.find<FocusFlowService>();
@@ -12,6 +13,9 @@ class HomeController extends GetxController {
   final RxDouble progress = 0.0.obs;
   
   final Rx<SessionDuration> selectedDuration = SessionDuration.thirty.obs;
+  
+  /// Check if Screen Time authorization was granted (not skipped)
+  bool get canStartSession => !AuthorizationController.isAuthorizationSkipped;
   
   Timer? _timer;
 
@@ -33,6 +37,17 @@ class HomeController extends GetxController {
   }
 
   void startSession() async {
+    // Check if Screen Time is authorized
+    if (!canStartSession) {
+      Get.snackbar(
+        'Authorization Required',
+        'Please grant Screen Time permission to start a focus session.',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+    
     final durationSeconds = selectedDuration.value.duration.inSeconds;
     await _service.startFocusSession(durationSeconds);
     

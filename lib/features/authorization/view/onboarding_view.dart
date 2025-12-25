@@ -74,7 +74,21 @@ class OnboardingView extends GetView<AuthorizationController> {
                 
                 const AuthorizationButton(),
                 
-                const SizedBox(height: 24),
+                const SizedBox(height: 12),
+                
+                // Skip button for development without Apple approval
+                TextButton(
+                  onPressed: controller.skipAuthorization,
+                  child: Text(
+                    'Skip for now',
+                    style: TextStyle(
+                      color: isDark ? Colors.white54 : Colors.black54,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
                 
                 Text(
                   'Requires Screen Time authorization',
