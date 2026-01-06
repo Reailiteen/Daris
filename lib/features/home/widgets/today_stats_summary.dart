@@ -24,31 +24,31 @@ class TodayStatsSummary extends GetView<StatisticsController> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          Row(
+          Obx(() => Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _StatItem(
                 icon: Icons.access_time_filled,
-                value: '0m', // We'll link to real stats later
+                value: controller.totalFocusTime.value,
                 label: 'Focus time',
                 color: AppColors.accentPurple,
               ),
               _VerticalDivider(),
               _StatItem(
                 icon: Icons.local_fire_department,
-                value: '0',
+                value: controller.dayStreak.value.toString(),
                 label: 'Day streak',
                 color: Colors.orange,
               ),
               _VerticalDivider(),
               _StatItem(
                 icon: Icons.check_circle,
-                value: '0',
-                label: 'This week',
+                value: controller.allSessions.length.toString(),
+                label: 'All sessions',
                 color: Colors.green,
               ),
             ],
-          ),
+          )),
         ],
       ),
     );
