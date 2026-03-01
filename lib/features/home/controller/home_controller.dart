@@ -1,8 +1,39 @@
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../data/services/focus_flow_service.dart';
 import '../../../data/models/focus_session.dart';
 import '../../authorization/controller/authorization_controller.dart';
+
+enum SessionDifficulty {
+  easy,
+  normal,
+  deepFocus;
+
+  String get label => switch (this) {
+    SessionDifficulty.easy => 'Easy',
+    SessionDifficulty.normal => 'Normal',
+    SessionDifficulty.deepFocus => 'Deep Focus',
+  };
+
+  String get description => switch (this) {
+    SessionDifficulty.easy => 'Breaks allowed anytime, cancel whenever',
+    SessionDifficulty.normal => 'Short delay before each break',
+    SessionDifficulty.deepFocus => 'No breaks — hardcore mode',
+  };
+
+  IconData get icon => switch (this) {
+    SessionDifficulty.easy => Icons.sentiment_satisfied_rounded,
+    SessionDifficulty.normal => Icons.bolt_rounded,
+    SessionDifficulty.deepFocus => Icons.lock_rounded,
+  };
+
+  Color get color => switch (this) {
+    SessionDifficulty.easy => Colors.green,
+    SessionDifficulty.normal => Colors.orange,
+    SessionDifficulty.deepFocus => const Color(0xFF5856D6),
+  };
+}
 
 class HomeController extends GetxController {
   final FocusFlowService _service = Get.find<FocusFlowService>();
@@ -13,7 +44,9 @@ class HomeController extends GetxController {
   final RxDouble progress = 0.0.obs;
   
   final Rx<SessionDuration> selectedDuration = SessionDuration.thirty.obs;
-  
+  final RxString sessionName = 'Focus Session'.obs;
+  final Rx<SessionDifficulty> selectedDifficulty = SessionDifficulty.normal.obs;
+
   /// Check if Screen Time authorization was granted (not skipped)
   bool get canStartSession => !AuthorizationController.isAuthorizationSkipped;
   
