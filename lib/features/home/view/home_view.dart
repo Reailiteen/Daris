@@ -16,20 +16,21 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   int _selectedIndex = 0;
 
-  final List<Widget> _tabs = [
-    const HomeTab(),
-    const AppSelectionView(),
-    const WebsiteBlockingView(),
-    const StatisticsView(),
-    const SettingsView(),
-  ];
-
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: _tabs[_selectedIndex],
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: const [
+          HomeTab(),
+          AppSelectionView(),
+          WebsiteBlockingView(),
+          StatisticsView(),
+          SettingsView(),
+        ],
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),

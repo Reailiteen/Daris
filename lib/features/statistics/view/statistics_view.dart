@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controller/statistics_controller.dart';
-import '../../../data/models/session_statistic.dart';
 
 class StatisticsView extends GetView<StatisticsController> {
   const StatisticsView({super.key});
@@ -170,7 +169,7 @@ class _InfoCard extends StatelessWidget {
 }
 
 class _HistoryItem extends StatelessWidget {
-  final SessionStatistic session;
+  final dynamic session;
 
   const _HistoryItem({required this.session});
 

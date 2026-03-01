@@ -13,10 +13,14 @@ import 'data/services/supabase_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Load environment variables
-  await dotenv.load(fileName: ".env");
-  
+
+  // Load .env from Flutter assets (works on all platforms: Android, iOS, Windows, web).
+  try {
+    await dotenv.load(fileName: '.env', mergeWith: {});
+  } catch (e) {
+    debugPrint('Failed to load .env: $e');
+  }
+
   // Initialize Supabase
   await Supabase.initialize(
     url: dotenv.env['SUPABASE_URL'] ?? '',
