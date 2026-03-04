@@ -11,7 +11,16 @@
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# Environment files — never commit secrets
+.env
 *.env
+
+# Node (Claude CLI / tooling installed locally)
+node_modules/
+package.json
+package-lock.json
+npm-debug.log*
 
 # IntelliJ related
 *.iml
@@ -44,3 +53,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter generated files for desktop platforms
+linux/flutter/ephemeral/
+macos/Flutter/ephemeral/
+macos/Flutter/GeneratedPluginRegistrant.swift
+linux/flutter/generated_plugin_registrant.cc
+linux/flutter/generated_plugin_registrant.h
+linux/flutter/generated_plugins.cmake

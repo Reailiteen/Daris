@@ -5,12 +5,28 @@ class SupabaseService extends GetxService {
   final _supabase = Supabase.instance.client;
 
   // MARK: - Auth
-  
+
   User? get currentUser => _supabase.auth.currentUser;
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 
+  Future<AuthResponse> signUp({required String email, required String password}) async {
+    return await _supabase.auth.signUp(email: email, password: password);
+  }
+
+  Future<AuthResponse> signIn({required String email, required String password}) async {
+    return await _supabase.auth.signInWithPassword(email: email, password: password);
+  }
+
+  Future<void> resendVerificationEmail(String email) async {
+    await _supabase.auth.resend(type: OtpType.signup, email: email);
+  }
+
+  Future<void> refreshSession() async {
+    await _supabase.auth.refreshSession();
+  }
+
   // MARK: - Profile
-  
+
   Future<Map<String, dynamic>?> getProfile(String userId) async {
     final response = await _supabase
         .from('profiles')
@@ -18,6 +34,38 @@ class SupabaseService extends GetxService {
         .eq('id', userId)
         .single();
     return response;
+  }
+
+  Future<void> completeOnboarding(String userId) async {
+    await _supabase.from('profiles').update({
+      'onboarding_complete': true,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', userId);
+  }
+
+  // MARK: - User Settings
+
+  Future<Map<String, dynamic>?> getUserSettings(String userId) async {
+    final response = await _supabase
+        .from('user_settings')
+        .select()
+        .eq('user_id', userId)
+        .maybeSingle();
+    return response;
+  }
+
+  Future<void> saveUserSettings({
+    required String userId,
+    required int weeklyScreenTimeMinutes,
+    required String activityFocus,
+    required List<String> blockingCategories,
+  }) async {
+    await _supabase.from('user_settings').update({
+      'weekly_screen_time_minutes': weeklyScreenTimeMinutes,
+      'activity_focus': activityFocus,
+      'blocking_categories': blockingCategories,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('user_id', userId);
   }
 
   // MARK: - Sports
