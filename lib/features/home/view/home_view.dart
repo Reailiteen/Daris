@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
 import 'home_tab.dart';
-import '../../statistics/view/statistics_view.dart';
-import '../../settings/view/settings_view.dart';
+import 'earn_tab.dart';
+import 'profile_tab.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -23,8 +23,8 @@ class _HomeViewState extends State<HomeView> {
         index: _selectedIndex,
         children: const [
           HomeTab(),
-          StatisticsView(),
-          SettingsView(),
+          EarnTab(),
+          ProfileTab(),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
@@ -36,19 +36,19 @@ class _HomeViewState extends State<HomeView> {
         showUnselectedLabels: true,
         items: const [
           BottomNavigationBarItem(
+            icon: Icon(Icons.nights_stay_outlined),
+            activeIcon: Icon(Icons.nights_stay),
+            label: 'Focus',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.school_outlined),
             activeIcon: Icon(Icons.school),
-            label: 'Study',
+            label: 'Earn',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            activeIcon: Icon(Icons.bar_chart),
-            label: 'Stats',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.settings_outlined),
-            activeIcon: Icon(Icons.settings),
-            label: 'Settings',
+            icon: Icon(Icons.person_outline),
+            activeIcon: Icon(Icons.person),
+            label: 'Profile',
           ),
         ],
       ),
