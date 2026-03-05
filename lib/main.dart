@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'core/theme/app_theme.dart';
 import 'data/services/focus_flow_service.dart';
+import 'data/services/groq_service.dart';
 import 'data/services/supabase_service.dart';
 import 'features/authorization/bindings/auth_binding.dart';
 import 'features/authorization/bindings/authorization_binding.dart';
@@ -11,6 +14,10 @@ import 'features/authorization/view/login_view.dart';
 import 'features/authorization/view/onboarding_view.dart';
 import 'features/authorization/view/onboarding_wizard_view.dart';
 import 'features/authorization/view/register_view.dart';
+import 'features/ai_questions/bindings/ai_questions_binding.dart';
+import 'features/ai_questions/view/ai_questions_view.dart';
+import 'features/tasks/bindings/tasks_binding.dart';
+import 'features/tasks/view/tasks_view.dart';
 import 'features/home/bindings/home_binding.dart';
 import 'features/home/view/home_view.dart';
 
@@ -31,16 +38,43 @@ void main() async {
     anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
   );
 
+  // Restore session so currentUser is available before resolving route
+  try {
+    await Supabase.instance.client.auth.refreshSession().timeout(
+      const Duration(seconds: 5),
+      onTimeout: () => throw TimeoutException('Session refresh timed out'),
+    );
+  } catch (e) {
+    debugPrint('Session refresh: $e');
+  }
+
   await Get.putAsync(() async => SupabaseService());
   await Get.putAsync(() async => FocusFlowService());
+  await Get.putAsync(() async => GroqService());
 
   final initialRoute = await _resolveInitialRoute();
+  _resolvedRoute = initialRoute;
 
-  runApp(FocusFlowApp(initialRoute: initialRoute));
+  runApp(const FocusFlowApp());
 }
 
 /// Determines the correct entry point based on the current auth + onboarding state.
 Future<String> _resolveInitialRoute() async {
+  try {
+    return await _resolveInitialRouteImpl().timeout(
+      const Duration(seconds: 8),
+      onTimeout: () {
+        debugPrint('Initial route resolution timed out');
+        return '/landing';
+      },
+    );
+  } catch (e, st) {
+    debugPrint('Initial route error: $e $st');
+    return '/landing';
+  }
+}
+
+Future<String> _resolveInitialRouteImpl() async {
   final supabase = Supabase.instance.client;
   final user = supabase.auth.currentUser;
 
@@ -77,10 +111,27 @@ Future<String> _resolveInitialRoute() async {
   return '/onboarding';
 }
 
-class FocusFlowApp extends StatelessWidget {
-  const FocusFlowApp({super.key, required this.initialRoute});
+/// Resolved route from main(); bootstrap uses this to navigate so bindings run.
+String _resolvedRoute = '/landing';
 
-  final String initialRoute;
+class _BootstrapPage extends StatelessWidget {
+  const _BootstrapPage();
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.currentRoute == '/') {
+        Get.offAllNamed(_resolvedRoute);
+      }
+    });
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+}
+
+class FocusFlowApp extends StatelessWidget {
+  const FocusFlowApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -90,8 +141,9 @@ class FocusFlowApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.system,
-      initialRoute: initialRoute,
+      initialRoute: '/',
       getPages: [
+        GetPage(name: '/', page: () => const _BootstrapPage()),
         GetPage(
           name: '/landing',
           page: () => const LandingView(),
@@ -126,6 +178,16 @@ class FocusFlowApp extends StatelessWidget {
           name: '/home',
           page: () => const HomeView(),
           binding: HomeBinding(),
+        ),
+        GetPage(
+          name: '/ai-questions',
+          page: () => const AIQuestionsView(),
+          binding: AIQuestionsBinding(),
+        ),
+        GetPage(
+          name: '/tasks',
+          page: () => const TasksView(),
+          binding: TasksBinding(),
         ),
       ],
     );

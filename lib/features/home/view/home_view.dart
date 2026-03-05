@@ -36,9 +36,9 @@ class _HomeViewState extends State<HomeView> {
         showUnselectedLabels: true,
         items: const [
           BottomNavigationBarItem(
-            icon: Icon(Icons.nights_stay_outlined),
-            activeIcon: Icon(Icons.nights_stay),
-            label: 'Focus',
+            icon: Icon(Icons.school_outlined),
+            activeIcon: Icon(Icons.school),
+            label: 'Study',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_outlined),

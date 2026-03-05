@@ -19,6 +19,7 @@ class AuthController extends GetxController {
   final RxInt onboardingStep = 0.obs;
   final RxInt weeklyScreenTimeMinutes = 120.obs;
   final RxList<String> blockingCategories = <String>[].obs;
+  final RxList<String> subjectNames = <String>[].obs;
 
   // Validation helpers
   String? validateEmail(String? value) {
@@ -187,6 +188,17 @@ class AuthController extends GetxController {
         weeklyScreenTimeMinutes: weeklyScreenTimeMinutes.value,
         blockingCategories: blockingCategories.toList(),
       );
+      // Save subjects collected in step 2
+      for (final name in subjectNames) {
+        try {
+          await _supabaseService.insertSubject(
+            userId: user.id,
+            name: name,
+          );
+        } catch (_) {
+          // skip individual subject errors
+        }
+      }
       await _supabaseService.completeOnboarding(user.id);
       Get.offAllNamed('/onboarding');
     } catch (_) {

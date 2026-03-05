@@ -50,12 +50,12 @@ class OnboardingWizardView extends GetView<AuthController> {
                   children: [
                     Obx(() => _StepIndicator(
                           currentStep: controller.onboardingStep.value,
-                          totalSteps: 2,
+                          totalSteps: 3,
                           isDark: isDark,
                         )),
                     const SizedBox(height: 8),
                     Obx(() => Text(
-                          'Step ${controller.onboardingStep.value + 1} of 2',
+                          'Step ${controller.onboardingStep.value + 1} of 3',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isDark ? Colors.white38 : Colors.black38,
                               ),
@@ -71,6 +71,8 @@ class OnboardingWizardView extends GetView<AuthController> {
                     case 0:
                       return _Step1ScreenTime(isDark: isDark);
                     case 1:
+                      return _Step2Subjects(isDark: isDark);
+                    case 2:
                       return _Step3BlockingCategories(
                           isDark: isDark,
                           categories: _categories,
@@ -103,11 +105,11 @@ class OnboardingWizardView extends GetView<AuthController> {
                       AuthGradientButton(
                         label: isLoading
                             ? null
-                            : (step < 1 ? 'Continue' : 'Get Started'),
+                            : (step < 2 ? 'Continue' : 'Get Started'),
                         onTap: isLoading
                             ? null
                             : () {
-                                if (step < 1) {
+                                if (step < 2) {
                                   controller.saveStepAndAdvance();
                                 } else {
                                   controller.finishOnboarding();
@@ -289,7 +291,151 @@ class _Step1ScreenTime extends GetView<AuthController> {
   }
 }
 
-// MARK: - Step 2: Blocking Categories
+// MARK: - Step 2: My Subjects
+
+class _Step2Subjects extends GetView<AuthController> {
+  const _Step2Subjects({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController textCtrl = TextEditingController();
+
+    void addSubject() {
+      final name = textCtrl.text.trim();
+      if (name.isEmpty) return;
+      if (!controller.subjectNames.contains(name)) {
+        controller.subjectNames.add(name);
+      }
+      textCtrl.clear();
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Center(
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.accentPurple.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.school_rounded,
+                  size: 56, color: AppColors.accentPurple),
+            ),
+          ),
+          const SizedBox(height: 28),
+          Center(
+            child: Text(
+              'My Subjects',
+              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 8),
+          Center(
+            child: Text(
+              'Add your university courses to get personalized quizzes',
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: isDark ? Colors.white60 : Colors.black54,
+                  ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(height: 28),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: textCtrl,
+                  style: TextStyle(
+                      color: isDark ? Colors.white : Colors.black87),
+                  decoration: InputDecoration(
+                    hintText: 'e.g. Calculus, Physics...',
+                    hintStyle: TextStyle(
+                        color: isDark ? Colors.white38 : Colors.black38),
+                    filled: true,
+                    fillColor: isDark
+                        ? Colors.white.withOpacity(0.07)
+                        : Colors.black.withOpacity(0.04),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                  ),
+                  onSubmitted: (_) => addSubject(),
+                ),
+              ),
+              const SizedBox(width: 10),
+              GestureDetector(
+                onTap: addSubject,
+                child: Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: const BoxDecoration(
+                    gradient: AppColors.primaryGradient,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.add, color: Colors.white, size: 22),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Obx(() => controller.subjectNames.isEmpty
+              ? Text(
+                  'No subjects added yet — you can skip and add later.',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: isDark ? Colors.white38 : Colors.black38,
+                  ),
+                )
+              : Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: controller.subjectNames.map((name) {
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            name,
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500),
+                          ),
+                          const SizedBox(width: 6),
+                          GestureDetector(
+                            onTap: () => controller.subjectNames.remove(name),
+                            child: const Icon(Icons.close,
+                                color: Colors.white70, size: 14),
+                          ),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                )),
+        ],
+      ),
+    );
+  }
+}
+
+// MARK: - Step 3: Blocking Categories
 
 class _Step3BlockingCategories extends GetView<AuthController> {
   const _Step3BlockingCategories({
