@@ -1,5 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/models/study_task.dart';
 import '../../balance/controller/balance_controller.dart';
@@ -15,9 +19,7 @@ class EarnTab extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: AppColors.backgroundGradient(isDark),
-      ),
+      decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -34,73 +36,84 @@ class EarnTab extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 'Study to earn screen time',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: isDark ? Colors.white54 : Colors.black45,
-                    ),
+                style: TextStyle(
+                    fontSize: 14,
+                    color: isDark ? Colors.white54 : Colors.black45),
               ),
               const SizedBox(height: 20),
 
-              // Balance card
-              const _BalanceCard(),
-              const SizedBox(height: 24),
+              _BalanceCard(isDark: isDark),
+              const SizedBox(height: 16),
 
-              // My Subjects
-              _SectionHeader(
-                title: 'My Subjects',
-                isDark: isDark,
-                trailing: GestureDetector(
-                  onTap: () => _showAddSubjectSheet(context, isDark),
-                  child: Container(
-                    padding: const EdgeInsets.all(4),
-                    decoration: BoxDecoration(
-                      color: AppColors.accentPurple.withOpacity(0.12),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.add,
-                        color: AppColors.accentPurple, size: 18),
+              _UnlockHourCard(isDark: isDark),
+              const SizedBox(height: 28),
+
+              // Subjects
+              Row(
+                children: [
+                  Text(
+                    'My Subjects',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
                   ),
-                ),
-              ),
-              const SizedBox(height: 10),
-              const _SubjectsChipList(),
-              const SizedBox(height: 24),
-
-              // Reward reference
-              const _RewardReference(),
-              const SizedBox(height: 24),
-
-              // Tasks section
-              _SectionHeader(
-                title: 'Complete a Task',
-                isDark: isDark,
-                trailing: GestureDetector(
-                  onTap: () => Get.toNamed('/tasks'),
-                  child: Text(
-                    'See all',
-                    style: TextStyle(
-                      color: AppColors.accentPurple,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => _showAddSubjectSheet(context, isDark),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add, color: Colors.white, size: 16),
+                          SizedBox(width: 4),
+                          Text('Add',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-              const SizedBox(height: 10),
-              const _TasksPreview(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 12),
+              _SubjectCardList(isDark: isDark),
+              const SizedBox(height: 28),
 
-              // AI Quiz section
-              _SectionHeader(title: 'Quick Quiz', isDark: isDark),
-              const SizedBox(height: 4),
-              Text(
-                'Answer AI-generated questions to earn screen time',
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDark ? Colors.white38 : Colors.black38,
-                ),
+              // Pending tasks
+              Row(
+                children: [
+                  Text(
+                    'Pending Tasks',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87,
+                        ),
+                  ),
+                  const Spacer(),
+                  GestureDetector(
+                    onTap: () => Get.toNamed('/tasks'),
+                    child: Text('See all',
+                        style: TextStyle(
+                            color: AppColors.accentPurple,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
-              const _QuizSubjectChips(),
+              _TasksPreview(isDark: isDark),
+              const SizedBox(height: 28),
+
+              _RewardTable(isDark: isDark),
               const SizedBox(height: 100),
             ],
           ),
@@ -110,117 +123,11 @@ class EarnTab extends StatelessWidget {
   }
 
   void _showAddSubjectSheet(BuildContext context, bool isDark) {
-    final textCtrl = TextEditingController();
-    final subjectsCtrl = Get.find<SubjectsController>();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: isDark ? const Color(0xFF1E2228) : Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 24,
-          bottom: MediaQuery.of(ctx).viewInsets.bottom + 32,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Add Subject',
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: isDark ? Colors.white : Colors.black87,
-                  ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: textCtrl,
-              autofocus: true,
-              style:
-                  TextStyle(color: isDark ? Colors.white : Colors.black87),
-              decoration: InputDecoration(
-                hintText: 'e.g. Calculus, Physics...',
-                hintStyle: TextStyle(
-                    color: isDark ? Colors.white38 : Colors.black38),
-                filled: true,
-                fillColor: isDark
-                    ? Colors.white.withOpacity(0.07)
-                    : Colors.black.withOpacity(0.04),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-              onSubmitted: (value) {
-                if (value.trim().isNotEmpty) {
-                  subjectsCtrl.addSubject(value.trim());
-                  Navigator.of(ctx).pop();
-                }
-              },
-            ),
-            const SizedBox(height: 16),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: AppColors.accentPurple,
-                ),
-                onPressed: () {
-                  final name = textCtrl.text.trim();
-                  if (name.isEmpty) return;
-                  subjectsCtrl.addSubject(name);
-                  Navigator.of(ctx).pop();
-                },
-                child: const Text('Add',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600)),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// MARK: - Section Header
-
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader({
-    required this.title,
-    required this.isDark,
-    this.trailing,
-  });
-
-  final String title;
-  final bool isDark;
-  final Widget? trailing;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          title,
-          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : Colors.black87,
-              ),
-        ),
-        const Spacer(),
-        if (trailing != null) trailing!,
-      ],
+      backgroundColor: Colors.transparent,
+      builder: (_) => _AddSubjectSheet(isDark: isDark),
     );
   }
 }
@@ -228,17 +135,15 @@ class _SectionHeader extends StatelessWidget {
 // MARK: - Balance Card
 
 class _BalanceCard extends StatelessWidget {
-  const _BalanceCard();
+  const _BalanceCard({required this.isDark});
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final balance = Get.find<BalanceController>();
-
     return Obx(() {
-      final isUnlimited = balance.isUnlimited;
       final earned = balance.earnedMinutesThisWeek.value;
       final progress = (earned / 300).clamp(0.0, 1.0);
-
       return Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
@@ -253,16 +158,13 @@ class _BalanceCard extends StatelessWidget {
                 const Icon(Icons.phone_android_rounded,
                     color: Colors.white70, size: 18),
                 const SizedBox(width: 6),
-                const Text(
-                  'Screen Time Balance',
-                  style: TextStyle(
-                    color: Colors.white70,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
+                const Text('Screen Time Balance',
+                    style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500)),
                 const Spacer(),
-                if (isUnlimited)
+                if (balance.isUnlimited)
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 4),
@@ -270,33 +172,28 @@ class _BalanceCard extends StatelessWidget {
                       color: Colors.white.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'UNLIMITED',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
+                    child: const Text('UNLIMITED',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5)),
                   ),
               ],
             ),
             const SizedBox(height: 12),
             Text(
-              isUnlimited ? 'Unlimited!' : balance.formattedBalance,
+              balance.isUnlimited ? 'Unlimited!' : balance.formattedBalance,
               style: const TextStyle(
-                color: Colors.white,
-                fontSize: 36,
-                fontWeight: FontWeight.bold,
-              ),
+                  color: Colors.white,
+                  fontSize: 36,
+                  fontWeight: FontWeight.bold),
             ),
-            if (!isUnlimited) ...[
+            if (!balance.isUnlimited) ...[
               const SizedBox(height: 4),
-              Text(
-                'earned this week  ·  ${300 - earned}m until unlimited',
-                style: const TextStyle(color: Colors.white60, fontSize: 12),
-              ),
+              Text('earned this week  ·  ${300 - earned}m until unlimited',
+                  style:
+                      const TextStyle(color: Colors.white60, fontSize: 12)),
               const SizedBox(height: 14),
               ClipRRect(
                 borderRadius: BorderRadius.circular(4),
@@ -310,10 +207,8 @@ class _BalanceCard extends StatelessWidget {
               ),
             ] else ...[
               const SizedBox(height: 4),
-              const Text(
-                'You hit the 300-minute milestone! Enjoy your week.',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
-              ),
+              const Text('Weekly milestone reached! Enjoy your week.',
+                  style: TextStyle(color: Colors.white70, fontSize: 12)),
             ],
           ],
         ),
@@ -322,164 +217,355 @@ class _BalanceCard extends StatelessWidget {
   }
 }
 
-// MARK: - Subjects Chip List
+// MARK: - Unlock 1 Hour Card
 
-class _SubjectsChipList extends StatelessWidget {
-  const _SubjectsChipList();
+class _UnlockHourCard extends StatelessWidget {
+  const _UnlockHourCard({required this.isDark});
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final subjectsCtrl = Get.find<SubjectsController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return GestureDetector(
+      onTap: () =>
+          Get.toNamed('/ai-questions', arguments: {'unlock': true}),
+      child: Container(
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: isDark
+              ? AppColors.accentPurple.withOpacity(0.15)
+              : AppColors.accentPurple.withOpacity(0.07),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+              color: AppColors.accentPurple.withOpacity(0.3), width: 1.5),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.lock_open_rounded,
+                  color: Colors.white, size: 24),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Unlock 1 Hour',
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87)),
+                  const SizedBox(height: 3),
+                  Text(
+                    'Answer 10 mixed questions from all your subjects. Complete the quiz to earn 60 minutes.',
+                    style: TextStyle(
+                        fontSize: 12,
+                        color: isDark ? Colors.white54 : Colors.black54,
+                        height: 1.4),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Icon(Icons.arrow_forward_ios_rounded,
+                size: 14,
+                color: isDark ? Colors.white38 : Colors.black38),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
+// MARK: - Subject Card List
+
+class _SubjectCardList extends StatelessWidget {
+  const _SubjectCardList({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = Get.find<SubjectsController>();
     return Obx(() {
-      final subjects = subjectsCtrl.subjects;
-      if (subjects.isEmpty) {
+      if (ctrl.subjects.isEmpty) {
         return Container(
-          padding: const EdgeInsets.all(14),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withOpacity(0.05)
+                ? Colors.white.withOpacity(0.04)
                 : Colors.black.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(14),
+            border: Border.all(
+              color: isDark
+                  ? Colors.white.withOpacity(0.07)
+                  : Colors.black.withOpacity(0.06),
+            ),
           ),
           child: Row(
             children: [
               Icon(Icons.school_outlined,
-                  color: isDark ? Colors.white30 : Colors.black26, size: 20),
-              const SizedBox(width: 10),
-              Text(
-                'No subjects yet. Tap + to add one.',
-                style: TextStyle(
-                  color: isDark ? Colors.white38 : Colors.black38,
-                  fontSize: 13,
+                  color: isDark ? Colors.white24 : Colors.black26, size: 22),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  'No subjects yet. Tap Add to get started.',
+                  style: TextStyle(
+                      fontSize: 14,
+                      color: isDark ? Colors.white38 : Colors.black38),
                 ),
               ),
             ],
           ),
         );
       }
-      return Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: subjects.map((s) {
-          return Container(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.08)
-                  : AppColors.accentPurple.withOpacity(0.08),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  s.name,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: isDark ? Colors.white70 : AppColors.accentPurple,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                GestureDetector(
-                  onTap: () => subjectsCtrl.deleteSubject(s.id),
-                  child: Icon(
-                    Icons.close,
-                    size: 14,
-                    color: isDark ? Colors.white30 : Colors.black26,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }).toList(),
+      return Column(
+        children: ctrl.subjects
+            .map((s) => _SubjectCard(subject: s, isDark: isDark))
+            .toList(),
       );
     });
   }
 }
 
-// MARK: - Reward Reference
-
-class _RewardReference extends StatelessWidget {
-  const _RewardReference();
+class _SubjectCard extends StatelessWidget {
+  const _SubjectCard({required this.subject, required this.isDark});
+  final dynamic subject;
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final ctrl = Get.find<SubjectsController>();
 
     return Container(
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 14),
+      padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.black.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(14),
+            ? Colors.white.withOpacity(0.07)
+            : Colors.white.withOpacity(0.92),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(
+          color: isDark
+              ? Colors.white.withOpacity(0.1)
+              : AppColors.accentPurple.withOpacity(0.12),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // Header
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(Icons.info_outline_rounded,
-                  size: 16,
-                  color: isDark ? Colors.white38 : Colors.black38),
-              const SizedBox(width: 6),
-              Text(
-                'How you earn',
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: isDark ? Colors.white54 : Colors.black54,
+              Container(
+                padding: const EdgeInsets.all(9),
+                decoration: BoxDecoration(
+                  color: AppColors.accentPurple.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: const Icon(Icons.school_rounded,
+                    color: AppColors.accentPurple, size: 20),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      subject.name as String,
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: isDark ? Colors.white : Colors.black87),
+                    ),
+                    if ((subject.syllabusBook as String?) != null &&
+                        (subject.syllabusBook as String).isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        subject.syllabusBook as String,
+                        style: TextStyle(
+                            fontSize: 12,
+                            color: isDark ? Colors.white54 : Colors.black45),
+                      ),
+                    ],
+                    if ((subject.syllabusFilePath as String?) != null) ...[
+                      const SizedBox(height: 6),
+                      GestureDetector(
+                        onTap: () => OpenFilex.open(subject.syllabusFilePath as String),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.picture_as_pdf_rounded,
+                                size: 13, color: Color(0xFFE53935)),
+                            const SizedBox(width: 4),
+                            Text(
+                              _pdfBasename(subject.syllabusFilePath as String),
+                              style: const TextStyle(
+                                  fontSize: 11,
+                                  color: Color(0xFFE53935),
+                                  fontWeight: FontWeight.w500,
+                                  decoration: TextDecoration.underline),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              GestureDetector(
+                onTap: () => ctrl.deleteSubject(subject.id as String),
+                child: Container(
+                  padding: const EdgeInsets.all(4),
+                  child: Icon(Icons.delete_outline_rounded,
+                      size: 18,
+                      color: isDark ? Colors.white24 : Colors.black26),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          _rewardRow('Small task', '+10m', isDark),
-          _rewardRow('Medium task', '+25m', isDark),
-          _rewardRow('Hard task', '+60m', isDark),
-          _rewardRow('1 correct answer', '+2m', isDark),
-          _rewardRow('5/5 perfect quiz', '+5m bonus', isDark),
-          const SizedBox(height: 6),
-          Text(
-            '300m earned = unlimited for the week. Resets every Monday.',
-            style: TextStyle(
-              fontSize: 11,
-              color: isDark ? Colors.white30 : Colors.black26,
+
+          // Semester components
+          if ((subject.totalTasks as int) > 0) ...[
+            const SizedBox(height: 14),
+            Container(
+                height: 1,
+                color: isDark
+                    ? Colors.white.withOpacity(0.08)
+                    : Colors.black.withOpacity(0.06)),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                if ((subject.numQuizzes as int) > 0)
+                  _Pill(
+                      '${subject.numQuizzes} Quiz${(subject.numQuizzes as int) > 1 ? "zes" : ""}',
+                      AppColors.accentTeal),
+                if ((subject.numAssignments as int) > 0)
+                  _Pill(
+                      '${subject.numAssignments} Assignment${(subject.numAssignments as int) > 1 ? "s" : ""}',
+                      AppColors.accentBlue),
+                if ((subject.numMidterms as int) > 0)
+                  _Pill(
+                      '${subject.numMidterms} Midterm${(subject.numMidterms as int) > 1 ? "s" : ""}',
+                      AppColors.accentOrange),
+                if ((subject.numFinals as int) > 0)
+                  _Pill(
+                      '${subject.numFinals} Final${(subject.numFinals as int) > 1 ? "s" : ""}',
+                      AppColors.accentRed),
+                if ((subject.numProjects as int) > 0)
+                  _Pill(
+                      '${subject.numProjects} Project${(subject.numProjects as int) > 1 ? "s" : ""}',
+                      AppColors.accentPurple),
+              ],
             ),
+            const SizedBox(height: 8),
+            Text(
+              '${subject.totalTasks} tasks  ·  ${subject.totalRewardMinutes} min potential',
+              style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.white30 : Colors.black38),
+            ),
+          ],
+
+          const SizedBox(height: 14),
+
+          // Action buttons
+          Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => Get.toNamed('/tasks'),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      color: isDark
+                          ? Colors.white.withOpacity(0.08)
+                          : Colors.black.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check_circle_outline_rounded,
+                            size: 15,
+                            color: isDark ? Colors.white54 : Colors.black54),
+                        const SizedBox(width: 6),
+                        Text('Tasks',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? Colors.white54
+                                    : Colors.black54)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: GestureDetector(
+                  onTap: () => Get.toNamed('/ai-questions', arguments: {
+                    'subjectName': subject.name,
+                    'syllabusBook': subject.syllabusBook,
+                  }),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.quiz_rounded,
+                            size: 15, color: Colors.white),
+                        SizedBox(width: 6),
+                        Text('Quiz',
+                            style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _rewardRow(String action, String reward, bool isDark) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              action,
-              style: TextStyle(
-                fontSize: 12,
-                color: isDark ? Colors.white54 : Colors.black54,
-              ),
-            ),
-          ),
-          Text(
-            reward,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: AppColors.accentPurple,
-            ),
-          ),
-        ],
+String _pdfBasename(String path) {
+  final name = path.split('/').last;
+  return name.length > 30 ? '${name.substring(0, 27)}...' : name;
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill(this.label, this.color);
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(20),
       ),
+      child: Text(label,
+          style: TextStyle(
+              fontSize: 12, fontWeight: FontWeight.w600, color: color)),
     );
   }
 }
@@ -487,13 +573,12 @@ class _RewardReference extends StatelessWidget {
 // MARK: - Tasks Preview
 
 class _TasksPreview extends StatelessWidget {
-  const _TasksPreview();
+  const _TasksPreview({required this.isDark});
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final tasksCtrl = Get.find<TasksController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     return Obx(() {
       final tasks = tasksCtrl.tasks.take(3).toList();
       if (tasks.isEmpty) {
@@ -517,11 +602,12 @@ class _TasksPreview extends StatelessWidget {
                 const Icon(Icons.add_circle_outline,
                     color: AppColors.accentPurple, size: 22),
                 const SizedBox(width: 10),
-                Text(
-                  'Add your first study task',
-                  style: TextStyle(
-                    color: isDark ? Colors.white54 : Colors.black54,
-                    fontSize: 14,
+                Expanded(
+                  child: Text(
+                    'No tasks yet — add a subject to auto-create them',
+                    style: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.black54,
+                        fontSize: 13),
                   ),
                 ),
               ],
@@ -538,7 +624,7 @@ class _TasksPreview extends StatelessWidget {
             decoration: BoxDecoration(
               color: isDark
                   ? Colors.white.withOpacity(0.07)
-                  : Colors.white.withOpacity(0.8),
+                  : Colors.white.withOpacity(0.85),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
                 color: isDark
@@ -552,23 +638,20 @@ class _TasksPreview extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(task.title,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
+                              color: isDark ? Colors.white : Colors.black87),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
                       Text(
-                        task.title,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        '${task.difficulty.label}  ·  +${task.rewardMinutes}m',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isDark ? Colors.white38 : Colors.black45,
-                        ),
-                      ),
+                          '${task.difficulty.label}  ·  +${task.rewardMinutes}m',
+                          style: TextStyle(
+                              fontSize: 12,
+                              color: isDark
+                                  ? Colors.white38
+                                  : Colors.black45)),
                     ],
                   ),
                 ),
@@ -581,14 +664,11 @@ class _TasksPreview extends StatelessWidget {
                       gradient: AppColors.primaryGradient,
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Text(
-                      'Done',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
+                    child: const Text('Done',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600)),
                   ),
                 ),
               ],
@@ -600,69 +680,562 @@ class _TasksPreview extends StatelessWidget {
   }
 }
 
-// MARK: - Quiz Subject Chips
+// MARK: - Reward Table
 
-class _QuizSubjectChips extends StatelessWidget {
-  const _QuizSubjectChips();
+class _RewardTable extends StatelessWidget {
+  const _RewardTable({required this.isDark});
+  final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final subjectsCtrl = Get.find<SubjectsController>();
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
-    return Obx(() {
-      final subjects = subjectsCtrl.subjects;
-      if (subjects.isEmpty) {
-        return Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withOpacity(0.05)
-                : Colors.black.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Text(
-            'Add subjects above to start quizzes',
-            style: TextStyle(
-              color: isDark ? Colors.white38 : Colors.black38,
-              fontSize: 13,
-            ),
-          ),
-        );
-      }
-      return Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: subjects.map((s) {
-          return GestureDetector(
-            onTap: () => Get.toNamed('/ai-questions'),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.quiz_rounded,
-                      color: Colors.white, size: 15),
-                  const SizedBox(width: 6),
-                  Text(
-                    s.name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.04)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.info_outline_rounded,
+                  size: 14,
+                  color: isDark ? Colors.white38 : Colors.black38),
+              const SizedBox(width: 6),
+              Text('How you earn',
+                  style: TextStyle(
                       fontSize: 13,
-                    ),
+                      fontWeight: FontWeight.w600,
+                      color: isDark ? Colors.white54 : Colors.black54)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _row('Small task (quiz)', '+10m', isDark),
+          _row('Medium task (assignment)', '+25m', isDark),
+          _row('Hard task (midterm / final / project)', '+60m', isDark),
+          _row('1 correct AI answer', '+2m', isDark),
+          _row('Perfect quiz (5/5)', '+5m bonus', isDark),
+          _row('Unlock quiz (10 mixed questions)', '+60m flat', isDark),
+          const SizedBox(height: 6),
+          Text(
+            '300m earned = unlimited for the week. Resets every Monday.',
+            style: TextStyle(
+                fontSize: 11,
+                color: isDark ? Colors.white30 : Colors.black26),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _row(String label, String reward, bool isDark) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 5),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(label,
+                style: TextStyle(
+                    fontSize: 12,
+                    color: isDark ? Colors.white54 : Colors.black54)),
+          ),
+          Text(reward,
+              style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.accentPurple)),
+        ],
+      ),
+    );
+  }
+}
+
+// MARK: - Add Subject Sheet (2 steps)
+
+class _AddSubjectSheet extends StatefulWidget {
+  const _AddSubjectSheet({required this.isDark});
+  final bool isDark;
+
+  @override
+  State<_AddSubjectSheet> createState() => _AddSubjectSheetState();
+}
+
+class _AddSubjectSheetState extends State<_AddSubjectSheet> {
+  int _step = 0;
+  final _nameCtrl = TextEditingController();
+  final _bookCtrl = TextEditingController();
+  String? _pdfPath;
+  String? _pdfDisplayName;
+  bool _pickingPdf = false;
+  int _quizzes = 0;
+  int _assignments = 0;
+  int _midterms = 0;
+  int _finals = 0;
+  int _projects = 0;
+
+  int get _totalTasks =>
+      _quizzes + _assignments + _midterms + _finals + _projects;
+  int get _totalMinutes =>
+      _quizzes * 10 + _assignments * 25 + (_midterms + _finals + _projects) * 60;
+
+  @override
+  void dispose() {
+    _nameCtrl.dispose();
+    _bookCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickPdf() async {
+    setState(() => _pickingPdf = true);
+    try {
+      final result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+      if (result == null || result.files.isEmpty || result.files.first.path == null) return;
+      final picked = result.files.first;
+      final docsDir = await getApplicationDocumentsDirectory();
+      final syllabusDir = Directory('${docsDir.path}/syllabi');
+      await syllabusDir.create(recursive: true);
+      final dest = File('${syllabusDir.path}/${picked.name}');
+      await File(picked.path!).copy(dest.path);
+      setState(() {
+        _pdfPath = dest.path;
+        _pdfDisplayName = picked.name;
+      });
+    } finally {
+      setState(() => _pickingPdf = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = widget.isDark;
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        decoration: BoxDecoration(
+          color: isDark ? const Color(0xFF1A1E24) : Colors.white,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 40),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: isDark ? Colors.white24 : Colors.black12,
+                    borderRadius: BorderRadius.circular(2),
                   ),
-                ],
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildStepIndicator(isDark),
+              const SizedBox(height: 20),
+              AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                transitionBuilder: (child, animation) => FadeTransition(
+                  opacity: animation,
+                  child: SlideTransition(
+                    position: Tween<Offset>(
+                            begin: const Offset(0.05, 0), end: Offset.zero)
+                        .animate(animation),
+                    child: child,
+                  ),
+                ),
+                child: _step == 0
+                    ? _buildStep1(isDark)
+                    : _buildStep2(isDark),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStepIndicator(bool isDark) {
+    return Row(
+      children: [
+        _dot(0, isDark),
+        _line(isDark),
+        _dot(1, isDark),
+      ],
+    );
+  }
+
+  Widget _dot(int index, bool isDark) {
+    final active = _step >= index;
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(
+        gradient: active ? AppColors.primaryGradient : null,
+        color:
+            active ? null : (isDark ? Colors.white12 : Colors.black12),
+        shape: BoxShape.circle,
+      ),
+      child: Center(
+        child: Text('${index + 1}',
+            style: TextStyle(
+                color: active
+                    ? Colors.white
+                    : (isDark ? Colors.white38 : Colors.black38),
+                fontSize: 13,
+                fontWeight: FontWeight.bold)),
+      ),
+    );
+  }
+
+  Widget _line(bool isDark) {
+    return Expanded(
+      child: Container(
+        height: 2,
+        margin: const EdgeInsets.symmetric(horizontal: 6),
+        decoration: BoxDecoration(
+          gradient: _step >= 1 ? AppColors.primaryGradient : null,
+          color: _step >= 1
+              ? null
+              : (isDark ? Colors.white12 : Colors.black12),
+          borderRadius: BorderRadius.circular(1),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStep1(bool isDark) {
+    return Column(
+      key: const ValueKey('s1'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Subject Details',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87)),
+        const SizedBox(height: 4),
+        Text('Tell us about the course',
+            style: TextStyle(
+                fontSize: 14,
+                color: isDark ? Colors.white54 : Colors.black45)),
+        const SizedBox(height: 24),
+        _label('Subject Name', isDark),
+        const SizedBox(height: 8),
+        _field(_nameCtrl, 'e.g. Calculus I', isDark, autofocus: true),
+        const SizedBox(height: 16),
+        _label('Textbook / Syllabus (optional)', isDark),
+        const SizedBox(height: 8),
+        _field(_bookCtrl, 'e.g. Stewart Calculus 8th Edition', isDark),
+        const SizedBox(height: 10),
+        _buildPdfPicker(isDark),
+        const SizedBox(height: 28),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
+              backgroundColor: AppColors.accentPurple,
+            ),
+            onPressed: () {
+              if (_nameCtrl.text.trim().isEmpty) return;
+              setState(() => _step = 1);
+            },
+            child: const Text('Continue',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStep2(bool isDark) {
+    return Column(
+      key: const ValueKey('s2'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Semester Plan',
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black87)),
+        const SizedBox(height: 4),
+        Text(
+            'How many of each? Tasks are created automatically when you save.',
+            style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.white54 : Colors.black45,
+                height: 1.4)),
+        const SizedBox(height: 20),
+        _stepper('Quizzes', _quizzes, AppColors.accentTeal, isDark,
+            (v) => setState(() => _quizzes = v)),
+        _stepper('Assignments', _assignments, AppColors.accentBlue, isDark,
+            (v) => setState(() => _assignments = v)),
+        _stepper('Midterms', _midterms, AppColors.accentOrange, isDark,
+            (v) => setState(() => _midterms = v)),
+        _stepper('Finals', _finals, AppColors.accentRed, isDark,
+            (v) => setState(() => _finals = v)),
+        _stepper('Projects', _projects, AppColors.accentPurple, isDark,
+            (v) => setState(() => _projects = v)),
+        if (_totalTasks > 0) ...[
+          const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              gradient: AppColors.primaryGradient,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.auto_awesome,
+                    color: Colors.white, size: 16),
+                const SizedBox(width: 8),
+                Text(
+                    'Creates $_totalTasks tasks worth $_totalMinutes minutes',
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600)),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 24),
+        Row(
+          children: [
+            Expanded(
+              child: TextButton(
+                onPressed: () => setState(() => _step = 0),
+                child: Text('Back',
+                    style: TextStyle(
+                        color: isDark ? Colors.white54 : Colors.black45)),
               ),
             ),
-          );
-        }).toList(),
+            const SizedBox(width: 12),
+            Expanded(
+              flex: 2,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12)),
+                  backgroundColor: AppColors.accentPurple,
+                ),
+                onPressed: _save,
+                child: const Text('Save Subject',
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPdfPicker(bool isDark) {
+    if (_pdfPath != null && _pdfDisplayName != null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: isDark
+              ? const Color(0xFFE53935).withOpacity(0.1)
+              : const Color(0xFFE53935).withOpacity(0.06),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: const Color(0xFFE53935).withOpacity(0.25), width: 1),
+        ),
+        child: Row(
+          children: [
+            const Icon(Icons.picture_as_pdf_rounded,
+                size: 18, color: Color(0xFFE53935)),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                _pdfDisplayName!,
+                style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white70 : Colors.black87),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            GestureDetector(
+              onTap: () => setState(() {
+                _pdfPath = null;
+                _pdfDisplayName = null;
+              }),
+              child: Icon(Icons.close_rounded,
+                  size: 18,
+                  color: isDark ? Colors.white38 : Colors.black38),
+            ),
+          ],
+        ),
       );
-    });
+    }
+    return GestureDetector(
+      onTap: _pickingPdf ? null : _pickPdf,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withOpacity(0.05)
+              : Colors.black.withOpacity(0.03),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: isDark
+                ? Colors.white.withOpacity(0.1)
+                : Colors.black.withOpacity(0.08),
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.attach_file_rounded,
+                size: 18,
+                color: isDark ? Colors.white38 : Colors.black38),
+            const SizedBox(width: 8),
+            Text(
+              _pickingPdf ? 'Selecting...' : 'Attach PDF (optional)',
+              style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.white38 : Colors.black45),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _label(String text, bool isDark) => Text(text,
+      style: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: isDark ? Colors.white54 : Colors.black54));
+
+  Widget _field(TextEditingController ctrl, String hint, bool isDark,
+      {bool autofocus = false}) {
+    return TextField(
+      controller: ctrl,
+      autofocus: autofocus,
+      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle:
+            TextStyle(color: isDark ? Colors.white30 : Colors.black38),
+        filled: true,
+        fillColor: isDark
+            ? Colors.white.withOpacity(0.07)
+            : Colors.black.withOpacity(0.04),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      ),
+    );
+  }
+
+  Widget _stepper(String label, int value, Color color, bool isDark,
+      ValueChanged<int> onChanged) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withOpacity(0.05)
+            : Colors.black.withOpacity(0.03),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(label,
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: isDark ? Colors.white70 : Colors.black87)),
+          ),
+          GestureDetector(
+            onTap: value > 0 ? () => onChanged(value - 1) : null,
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Colors.white.withOpacity(0.1)
+                    : Colors.black.withOpacity(0.07),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(Icons.remove,
+                  size: 16,
+                  color: value > 0
+                      ? (isDark ? Colors.white : Colors.black87)
+                      : Colors.grey),
+            ),
+          ),
+          SizedBox(
+            width: 36,
+            child: Text('$value',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? Colors.white : Colors.black87)),
+          ),
+          GestureDetector(
+            onTap: () => onChanged(value + 1),
+            child: Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.add, size: 16, color: Colors.white),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _save() async {
+    final ctrl = Get.find<SubjectsController>();
+    await ctrl.addSubject(
+      name: _nameCtrl.text.trim(),
+      syllabusBook:
+          _bookCtrl.text.trim().isEmpty ? null : _bookCtrl.text.trim(),
+      syllabusFilePath: _pdfPath,
+      numQuizzes: _quizzes,
+      numAssignments: _assignments,
+      numMidterms: _midterms,
+      numFinals: _finals,
+      numProjects: _projects,
+    );
+    if (mounted) Navigator.of(context).pop();
   }
 }

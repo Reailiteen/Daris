@@ -112,14 +112,26 @@ class SupabaseService extends GetxService {
   Future<Map<String, dynamic>> insertSubject({
     required String userId,
     required String name,
+    String? syllabusBook,
+    String? syllabusFilePath,
     DateTime? examDate,
-    String? materialNotes,
+    int numQuizzes = 0,
+    int numAssignments = 0,
+    int numMidterms = 0,
+    int numFinals = 0,
+    int numProjects = 0,
   }) async {
     final payload = {
       'user_id': userId,
       'name': name,
+      if (syllabusBook != null && syllabusBook.isNotEmpty) 'syllabus_book': syllabusBook,
+      if (syllabusFilePath != null) 'syllabus_file_path': syllabusFilePath,
       if (examDate != null) 'exam_date': examDate.toIso8601String().split('T')[0],
-      if (materialNotes != null) 'material_notes': materialNotes,
+      'num_quizzes': numQuizzes,
+      'num_assignments': numAssignments,
+      'num_midterms': numMidterms,
+      'num_finals': numFinals,
+      'num_projects': numProjects,
     };
     final response = await _supabase
         .from('subjects')
