@@ -31,7 +31,7 @@ class _HomeViewState extends State<HomeView> {
         currentIndex: _selectedIndex,
         onTap: (index) => setState(() => _selectedIndex = index),
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.accentPurple,
+        selectedItemColor: AppColors.primary,
         unselectedItemColor: isDark ? Colors.white38 : Colors.black38,
         showUnselectedLabels: true,
         items: const [

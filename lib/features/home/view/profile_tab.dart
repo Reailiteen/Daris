@@ -15,7 +15,7 @@ class ProfileTab extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+      decoration: BoxDecoration(color: AppColors.flat(isDark)),
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -51,7 +51,7 @@ class ProfileTab extends StatelessWidget {
                       title: 'Current Streak',
                       value: '0 days',
                       icon: Icons.local_fire_department_rounded,
-                      color: AppColors.accentOrange,
+                      color: AppColors.reward,
                       isDark: isDark,
                     ),
                   ),
@@ -61,7 +61,7 @@ class ProfileTab extends StatelessWidget {
                       title: 'Avg. Daily',
                       value: '0 min',
                       icon: Icons.timer_rounded,
-                      color: AppColors.accentBlue,
+                      color: AppColors.primary,
                       isDark: isDark,
                     ),
                   ),
@@ -81,12 +81,7 @@ class ProfileTab extends StatelessWidget {
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.04)
-                      : Colors.white.withOpacity(0.7),
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                decoration: DarisDecorations.card(isDark),
                 child: Center(
                   child: Text('No sessions recorded yet',
                       style: TextStyle(
@@ -221,7 +216,7 @@ class _SettingsPage extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration:
-            BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+            BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,12 +271,7 @@ class _BalanceSummaryCard extends StatelessWidget {
       final progress = (earned / 300).clamp(0.0, 1.0);
       return Container(
         padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withOpacity(0.06)
-              : Colors.white.withOpacity(0.8),
-          borderRadius: BorderRadius.circular(18),
-        ),
+        decoration: DarisDecorations.card(isDark),
         child: Row(
           children: [
             Container(
@@ -327,7 +317,7 @@ class _BalanceSummaryCard extends StatelessWidget {
                             ? Colors.white.withOpacity(0.1)
                             : Colors.black.withOpacity(0.06),
                         valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.accentPurple),
+                            AppColors.success),
                       ),
                     ),
                   ],
@@ -354,24 +344,19 @@ class _ChartCard extends StatelessWidget {
     return Container(
       height: 200,
       padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
           maxY: 60,
           barGroups: [
-            _bar(0, 15, AppColors.accentTeal),
-            _bar(1, 30, AppColors.accentBlue),
-            _bar(2, 45, AppColors.accentPurple),
-            _bar(3, 20, AppColors.accentTeal),
-            _bar(4, 55, AppColors.accentBlue),
-            _bar(5, 30, AppColors.accentPurple),
-            _bar(6, 10, AppColors.accentTeal),
+            _bar(0, 15, AppColors.success),
+            _bar(1, 30, AppColors.success),
+            _bar(2, 45, AppColors.success),
+            _bar(3, 20, AppColors.success),
+            _bar(4, 55, AppColors.success),
+            _bar(5, 30, AppColors.success),
+            _bar(6, 10, AppColors.success),
           ],
           gridData: const FlGridData(show: false),
           borderData: FlBorderData(show: false),
@@ -442,12 +427,7 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

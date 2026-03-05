@@ -14,7 +14,7 @@ class WebsiteBlockingView extends GetView<WebsiteBlockingController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.backgroundGradient(isDark),
+        color: AppColors.flat(isDark),
       ),
       child: SafeArea(
         child: Column(
@@ -138,21 +138,18 @@ class _WebsiteListItem extends GetView<WebsiteBlockingController> {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: website.category.icon == Icons.public 
-                ? AppColors.accentBlue.withOpacity(0.1)
-                : AppColors.accentPurple.withOpacity(0.1),
+                ? AppColors.primaryLight.withOpacity(0.1)
+                : AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
-            child: Icon(website.category.icon, size: 24, color: AppColors.accentPurple),
+            child: Icon(website.category.icon, size: 24, color: AppColors.primary),
           ),
           const SizedBox(width: 16),
           Expanded(
@@ -173,11 +170,11 @@ class _WebsiteListItem extends GetView<WebsiteBlockingController> {
           Switch.adaptive(
             value: website.isEnabled,
             onChanged: (_) => controller.toggleWebsite(website.id),
-            activeColor: AppColors.accentPurple,
+            activeColor: AppColors.primary,
           ),
           IconButton(
             onPressed: () => controller.removeWebsite(website.id),
-            icon: const Icon(Icons.delete_outline, color: Colors.grey, size: 20),
+            icon: const Icon(Icons.delete_outline, color: AppColors.error, size: 20),
           ),
         ],
       ),

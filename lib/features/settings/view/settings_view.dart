@@ -53,7 +53,7 @@ class SettingsView extends GetView<SettingsController> {
                   isDark: isDark,
                   icon: Icons.logout_rounded,
                   title: 'Sign Out',
-                  color: AppColors.accentRed,
+                  color: AppColors.error,
                   onTap: () => _confirmSignOut(context),
                 ),
               ],
@@ -71,7 +71,7 @@ class SettingsView extends GetView<SettingsController> {
             trailing: Obx(() => Switch.adaptive(
                   value: controller.notificationsEnabled.value,
                   onChanged: (v) => controller.notificationsEnabled.value = v,
-                  activeColor: AppColors.accentPurple,
+                  activeColor: AppColors.primary,
                 )),
           ),
           _Tile(
@@ -95,7 +95,7 @@ class SettingsView extends GetView<SettingsController> {
             isDark: isDark,
             icon: Icons.no_accounts_outlined,
             title: 'Revoke Screen Time Authorization',
-            color: AppColors.accentRed,
+            color: AppColors.error,
             onTap: controller.revokeAuthorization,
           ),
 
@@ -191,7 +191,7 @@ class SettingsView extends GetView<SettingsController> {
             },
             child: const Text('Save',
                 style: TextStyle(
-                    color: AppColors.accentPurple,
+                    color: AppColors.primary,
                     fontWeight: FontWeight.bold)),
           ),
         ],
@@ -227,7 +227,7 @@ class SettingsView extends GetView<SettingsController> {
             },
             child: const Text('Sign Out',
                 style: TextStyle(
-                    color: AppColors.accentRed,
+                    color: AppColors.error,
                     fontWeight: FontWeight.bold)),
           ),
         ],
@@ -269,12 +269,7 @@ class _Tile extends StatelessWidget {
     final effectiveTitleColor = titleColor ?? tileColor;
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.white.withOpacity(0.75),
-        borderRadius: BorderRadius.circular(16),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: ListTile(
         onTap: onTap,
         leading: leading ??

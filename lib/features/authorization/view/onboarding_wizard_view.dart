@@ -43,7 +43,7 @@ class OnboardingWizardView extends GetView<AuthController> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+        decoration: BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Obx(() {
             final step = controller.onboardingStep.value;
@@ -119,7 +119,7 @@ class OnboardingWizardView extends GetView<AuthController> {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: Text(
                             controller.errorMessage.value!,
-                            style: const TextStyle(color: AppColors.accentRed),
+                            style: const TextStyle(color: AppColors.error),
                             textAlign: TextAlign.center,
                           ),
                         ),
@@ -234,7 +234,7 @@ class _Slide1Welcome extends StatelessWidget {
               borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: AppColors.accentPurple.withOpacity(0.35),
+                  color: AppColors.primary.withOpacity(0.35),
                   blurRadius: 28,
                   offset: const Offset(0, 10),
                 ),
@@ -267,7 +267,7 @@ class _Slide1Welcome extends StatelessWidget {
           // Feature rows
           _FeatureRow(
             icon: Icons.menu_book_rounded,
-            color: AppColors.accentPurple,
+            color: AppColors.primary,
             title: 'Study to earn',
             subtitle: 'Complete tasks and answer AI quizzes to earn screen time minutes.',
             isDark: isDark,
@@ -275,7 +275,7 @@ class _Slide1Welcome extends StatelessWidget {
           const SizedBox(height: 16),
           _FeatureRow(
             icon: Icons.phone_android_rounded,
-            color: AppColors.accentTeal,
+            color: AppColors.primary,
             title: 'Spend wisely',
             subtitle: 'Use your earned minutes for social media, gaming, and more.',
             isDark: isDark,
@@ -333,11 +333,7 @@ class _Slide2HowItWorks extends StatelessWidget {
 
           // System A
           _EarnCard(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF5856D6), Color(0xFF3B89FA)],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            gradient: AppColors.primaryGradient,
             icon: Icons.check_circle_outline_rounded,
             title: 'Study Tasks',
             rows: const [
@@ -351,7 +347,7 @@ class _Slide2HowItWorks extends StatelessWidget {
           // System B
           _EarnCard(
             gradient: const LinearGradient(
-              colors: [Color(0xFF5AC8FA), Color(0xFF34C759)],
+              colors: [Color(0xFF26A69A), Color(0xFF4CAF50)],
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
             ),
@@ -421,11 +417,11 @@ class _StepPersonalInfo extends GetView<AuthController> {
             child: Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppColors.accentPurple.withOpacity(0.12),
+                color: AppColors.primary.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.person_rounded,
-                  size: 52, color: AppColors.accentPurple),
+                  size: 52, color: AppColors.primary),
             ),
           ),
           const SizedBox(height: 28),
@@ -493,11 +489,11 @@ class _StepPhoneHabits extends GetView<AuthController> {
             child: Container(
               padding: const EdgeInsets.all(18),
               decoration: BoxDecoration(
-                color: AppColors.accentTeal.withOpacity(0.12),
+                color: AppColors.primary.withOpacity(0.12),
                 shape: BoxShape.circle,
               ),
               child: const Icon(Icons.phone_android_rounded,
-                  size: 52, color: AppColors.accentTeal),
+                  size: 52, color: AppColors.primary),
             ),
           ),
           const SizedBox(height: 28),
@@ -551,8 +547,8 @@ class _StepPhoneHabits extends GetView<AuthController> {
                           foreground: Paint()
                             ..shader = const LinearGradient(
                               colors: [
-                                AppColors.accentPurple,
-                                AppColors.accentBlue
+                                AppColors.primary,
+                                AppColors.success
                               ],
                             ).createShader(
                                 const Rect.fromLTWH(0, 0, 120, 60)),
@@ -562,13 +558,13 @@ class _StepPhoneHabits extends GetView<AuthController> {
                 const SizedBox(height: 12),
                 SliderTheme(
                   data: SliderTheme.of(context).copyWith(
-                    activeTrackColor: AppColors.accentPurple,
+                    activeTrackColor: AppColors.primary,
                     inactiveTrackColor: isDark
                         ? Colors.white.withOpacity(0.12)
                         : Colors.black.withOpacity(0.08),
-                    thumbColor: AppColors.accentPurple,
+                    thumbColor: AppColors.primary,
                     overlayColor:
-                        AppColors.accentPurple.withOpacity(0.15),
+                        AppColors.primary.withOpacity(0.15),
                     trackHeight: 4,
                   ),
                   child: Slider(
@@ -819,7 +815,7 @@ class _OnboardingSubjectCard extends StatelessWidget {
         border: Border.all(
           color: isDark
               ? Colors.white.withOpacity(0.1)
-              : AppColors.accentPurple.withOpacity(0.12),
+              : AppColors.primary.withOpacity(0.12),
         ),
       ),
       child: Row(
@@ -828,11 +824,11 @@ class _OnboardingSubjectCard extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: AppColors.accentPurple.withOpacity(0.12),
+              color: AppColors.primary.withOpacity(0.12),
               borderRadius: BorderRadius.circular(9),
             ),
             child: const Icon(Icons.school_rounded,
-                color: AppColors.accentPurple, size: 18),
+                color: AppColors.primary, size: 18),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -859,11 +855,11 @@ class _OnboardingSubjectCard extends StatelessWidget {
                     children: [
                       if (quizzes > 0)
                         _SmallPill('$quizzes Quiz${quizzes > 1 ? "zes" : ""}',
-                            AppColors.accentTeal),
+                            AppColors.primary),
                       if (assignments > 0)
                         _SmallPill(
                             '$assignments Assign${assignments > 1 ? "ments" : "ment"}',
-                            AppColors.accentBlue),
+                            AppColors.success),
                       if (midterms > 0)
                         _SmallPill(
                             '$midterms Midterm${midterms > 1 ? "s" : ""}',
@@ -871,11 +867,11 @@ class _OnboardingSubjectCard extends StatelessWidget {
                       if (finals > 0)
                         _SmallPill(
                             '$finals Final${finals > 1 ? "s" : ""}',
-                            AppColors.accentRed),
+                            AppColors.error),
                       if (projects > 0)
                         _SmallPill(
                             '$projects Project${projects > 1 ? "s" : ""}',
-                            AppColors.accentPurple),
+                            AppColors.primary),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -1057,7 +1053,7 @@ class _OnboardingAddSubjectSheetState
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              backgroundColor: AppColors.accentPurple,
+              backgroundColor: AppColors.primary,
             ),
             onPressed: () {
               if (_nameCtrl.text.trim().isEmpty) return;
@@ -1091,15 +1087,15 @@ class _OnboardingAddSubjectSheetState
                 color: isDark ? Colors.white54 : Colors.black45,
                 height: 1.4)),
         const SizedBox(height: 20),
-        _stepper('Quizzes', _quizzes, AppColors.accentTeal, isDark,
+        _stepper('Quizzes', _quizzes, AppColors.primary, isDark,
             (v) => setState(() => _quizzes = v)),
-        _stepper('Assignments', _assignments, AppColors.accentBlue, isDark,
+        _stepper('Assignments', _assignments, AppColors.success, isDark,
             (v) => setState(() => _assignments = v)),
         _stepper('Midterms', _midterms, AppColors.accentOrange, isDark,
             (v) => setState(() => _midterms = v)),
-        _stepper('Finals', _finals, AppColors.accentRed, isDark,
+        _stepper('Finals', _finals, AppColors.error, isDark,
             (v) => setState(() => _finals = v)),
-        _stepper('Projects', _projects, AppColors.accentPurple, isDark,
+        _stepper('Projects', _projects, AppColors.primary, isDark,
             (v) => setState(() => _projects = v)),
         if (_total > 0) ...[
           const SizedBox(height: 14),
@@ -1141,7 +1137,7 @@ class _OnboardingAddSubjectSheetState
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: AppColors.accentPurple,
+                  backgroundColor: AppColors.primary,
                 ),
                 onPressed: _save,
                 child: const Text('Add Subject',

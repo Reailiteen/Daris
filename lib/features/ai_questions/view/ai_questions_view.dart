@@ -41,7 +41,7 @@ class _AIQuestionsViewState extends State<AIQuestionsView> {
       body: Container(
         width: double.infinity,
         decoration:
-            BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+            BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Obx(() {
             if (controller.isLoading.value) {
@@ -73,7 +73,7 @@ class _LoadingScreen extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const CircularProgressIndicator(color: AppColors.accentPurple),
+          const CircularProgressIndicator(color: AppColors.primary),
           const SizedBox(height: 20),
           Text(
             'Generating questions...',
@@ -163,7 +163,7 @@ class _QuestionScreen extends StatelessWidget {
                           ? Colors.white.withOpacity(0.12)
                           : Colors.black.withOpacity(0.08),
                       valueColor: const AlwaysStoppedAnimation<Color>(
-                          AppColors.accentPurple),
+                          AppColors.success),
                     ),
                   ),
                 ),
@@ -186,7 +186,7 @@ class _QuestionScreen extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
-                      color: AppColors.accentPurple),
+                      color: AppColors.primary),
                 ),
                 const SizedBox(width: 8),
                 _TypeBadge(type: q.type),
@@ -232,9 +232,9 @@ class _TypeBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final (label, color) = switch (type) {
-      QuestionType.multipleChoice => ('MCQ', AppColors.accentBlue),
-      QuestionType.trueOrFalse => ('True / False', AppColors.accentTeal),
-      QuestionType.openEnded => ('Open-ended', AppColors.accentOrange),
+      QuestionType.multipleChoice => ('MCQ', AppColors.primaryLight),
+      QuestionType.trueOrFalse => ('True / False', AppColors.primary),
+      QuestionType.openEnded => ('Open-ended', AppColors.warning),
     };
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -262,22 +262,26 @@ class _MCQOptions extends StatelessWidget {
   Widget build(BuildContext context) {
     return Obx(() {
       final selected = controller.selectedAnswer.value;
+      const letters = ['A', 'B', 'C', 'D'];
       return Column(
         children: [
           ...List.generate(q.options.length, (i) {
             Color? border;
             Color? bg;
             Color text = isDark ? Colors.white70 : Colors.black87;
+            Color badgeBg = AppColors.primary;
 
             if (selected != null) {
               if (i == q.correctIndex) {
-                border = AppColors.accentGreen;
-                bg = AppColors.accentGreen.withOpacity(0.12);
-                text = AppColors.accentGreen;
+                border = AppColors.success;
+                bg = AppColors.success.withOpacity(0.12);
+                text = AppColors.success;
+                badgeBg = AppColors.success;
               } else if (i == selected) {
-                border = AppColors.accentRed;
-                bg = AppColors.accentRed.withOpacity(0.12);
-                text = AppColors.accentRed;
+                border = AppColors.error;
+                bg = AppColors.error.withOpacity(0.12);
+                text = AppColors.error;
+                badgeBg = AppColors.error;
               }
             }
 
@@ -302,13 +306,31 @@ class _MCQOptions extends StatelessWidget {
                     width: border != null ? 1.5 : 1,
                   ),
                 ),
-                child: Text(q.options[i],
-                    style: TextStyle(
-                        fontSize: 15,
-                        color: text,
-                        fontWeight: border != null
-                            ? FontWeight.w600
-                            : FontWeight.normal)),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 14,
+                      backgroundColor: badgeBg,
+                      child: Text(
+                        i < letters.length ? letters[i] : '${i + 1}',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 13,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(q.options[i],
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: text,
+                              fontWeight: border != null
+                                  ? FontWeight.w600
+                                  : FontWeight.normal)),
+                    ),
+                  ],
+                ),
               ),
             );
           }),
@@ -398,7 +420,7 @@ class _TrueFalseOptions extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.accentTeal)),
+                          color: AppColors.primary)),
                   const SizedBox(height: 6),
                   Text(
                     q.explanation!,
@@ -455,11 +477,11 @@ class _TFButton extends StatelessWidget {
           ? Colors.white70
           : Colors.black87;
     } else if (index == correctIndex) {
-      bg = AppColors.accentGreen.withOpacity(0.15);
-      fg = AppColors.accentGreen;
+      bg = AppColors.success.withOpacity(0.15);
+      fg = AppColors.success;
     } else if (index == selected) {
-      bg = AppColors.accentRed.withOpacity(0.15);
-      fg = AppColors.accentRed;
+      bg = AppColors.error.withOpacity(0.15);
+      fg = AppColors.error;
     } else {
       bg = Colors.white.withOpacity(0.04);
       fg = Colors.grey;
@@ -530,16 +552,16 @@ class _OpenEndedSection extends StatelessWidget {
             _NextButton(
               label: 'Reveal Answer',
               onTap: controller.revealOpenEnded,
-              color: AppColors.accentOrange,
+              color: AppColors.reward,
             ),
           ] else ...[
             Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: AppColors.accentOrange.withOpacity(0.08),
+                color: AppColors.reward.withOpacity(0.08),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                    color: AppColors.accentOrange.withOpacity(0.25)),
+                    color: AppColors.reward.withOpacity(0.25)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -548,7 +570,7 @@ class _OpenEndedSection extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
-                          color: AppColors.accentOrange)),
+                          color: AppColors.reward)),
                   const SizedBox(height: 8),
                   Text(
                     q.expectedAnswer ?? '—',
@@ -577,21 +599,21 @@ class _OpenEndedSection extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: AppColors.accentGreen.withOpacity(0.12),
+                        color: AppColors.success.withOpacity(0.12),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: AppColors.accentGreen.withOpacity(0.3)),
+                            color: AppColors.success.withOpacity(0.3)),
                       ),
                       child: const Center(
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.thumb_up_rounded,
-                                color: AppColors.accentGreen, size: 20),
+                                color: AppColors.success, size: 20),
                             SizedBox(width: 8),
                             Text('Got it',
                                 style: TextStyle(
-                                    color: AppColors.accentGreen,
+                                    color: AppColors.success,
                                     fontWeight: FontWeight.bold)),
                           ],
                         ),
@@ -606,21 +628,21 @@ class _OpenEndedSection extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       decoration: BoxDecoration(
-                        color: AppColors.accentRed.withOpacity(0.1),
+                        color: AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                            color: AppColors.accentRed.withOpacity(0.25)),
+                            color: AppColors.error.withOpacity(0.25)),
                       ),
                       child: const Center(
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(Icons.thumb_down_rounded,
-                                color: AppColors.accentRed, size: 20),
+                                color: AppColors.error, size: 20),
                             SizedBox(width: 8),
                             Text('Missed it',
                                 style: TextStyle(
-                                    color: AppColors.accentRed,
+                                    color: AppColors.error,
                                     fontWeight: FontWeight.bold)),
                           ],
                         ),
@@ -655,7 +677,7 @@ class _NextButton extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          backgroundColor: color ?? AppColors.accentPurple,
+          backgroundColor: color ?? AppColors.primary,
         ),
         onPressed: onTap,
         child: Text(label,
@@ -728,12 +750,12 @@ class _ResultsScreen extends StatelessWidget {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.accentOrange.withOpacity(0.15),
+                  color: AppColors.reward.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text('+5 bonus for perfect score!',
                     style: TextStyle(
-                        color: AppColors.accentOrange,
+                        color: AppColors.reward,
                         fontWeight: FontWeight.w600)),
               ),
             ],
@@ -745,7 +767,7 @@ class _ResultsScreen extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: AppColors.accentPurple,
+                  backgroundColor: AppColors.primary,
                 ),
                 onPressed: () async {
                   await controller.finishSession();

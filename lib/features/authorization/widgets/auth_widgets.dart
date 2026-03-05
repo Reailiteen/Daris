@@ -77,17 +77,17 @@ class _AuthFieldState extends State<AuthField> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide:
-                  const BorderSide(color: AppColors.accentPurple, width: 1.5),
+                  const BorderSide(color: AppColors.primary, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide:
-                  const BorderSide(color: AppColors.accentRed, width: 1.0),
+                  const BorderSide(color: AppColors.error, width: 1.0),
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide:
-                  const BorderSide(color: AppColors.accentRed, width: 1.5),
+                  const BorderSide(color: AppColors.error, width: 1.5),
             ),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
@@ -126,7 +126,7 @@ class AuthGradientButton extends StatelessWidget {
         boxShadow: onTap != null
             ? [
                 BoxShadow(
-                  color: AppColors.accentPurple.withOpacity(0.3),
+                  color: AppColors.primary.withOpacity(0.3),
                   blurRadius: 12,
                   offset: const Offset(0, 4),
                 ),

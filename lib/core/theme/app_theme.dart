@@ -2,38 +2,105 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppColors {
-  // Brand Colors
-  static const Color accentPurple = Color(0xFF5856D6);
-  static const Color accentBlue = Color(0xFF3B89FA);
-  static const Color accentTeal = Color(0xFF5AC8FA);
-  static const Color accentGreen = Color(0xFF34C759);
-  static const Color accentOrange = Color(0xFFFF9500);
-  static const Color accentRed = Color(0xFFFF3B30);
+  // Primary
+  static const Color primary = Color(0xFF1565C0);
+  static const Color primaryLight = Color(0xFF1E88E5);
+  static const Color primarySurface = Color(0xFFE3F2FD);
 
-  // Background Colors - Light
-  static const Color backgroundTopLight = Color(0xFFF5F0F1);
-  static const Color backgroundBottomLight = Color(0xFFF7F7FC);
+  // Semantic
+  static const Color success = Color(0xFF4CAF50);
+  static const Color reward = Color(0xFFFFB300);
+  static const Color rewardDark = Color(0xFFFFA000);
+  static const Color error = Color(0xFFE53935);
+  static const Color warning = Color(0xFFFF9800);
 
-  // Background Colors - Dark
-  static const Color backgroundTopDark = Color(0xFF191D22);
-  static const Color backgroundBottomDark = Color(0xFF101419);
+  // Surfaces
+  static const Color background = Color(0xFFF5F7FA);
+  static const Color surface = Color(0xFFFFFFFF);
+  static const Color backgroundDark = Color(0xFF121212);
+  static const Color surfaceDark = Color(0xFF1E1E1E);
+
+  // Text
+  static const Color textPrimary = Color(0xFF212121);
+  static const Color textSecondary = Color(0xFF757575);
+  static const Color textTertiary = Color(0xFF9E9E9E);
+  static const Color textPrimaryDark = Color(0xFFF5F5F5);
+  static const Color textSecondaryDark = Color(0xFFBDBDBD);
+  static const Color textTertiaryDark = Color(0xFF757575);
+
+  // Divider
+  static const Color divider = Color(0xFFE0E0E0);
+  static const Color dividerDark = Color(0xFF424242);
+
+  // Legacy aliases (kept for gradual migration)
+  static const Color accentPurple = primary;
+  static const Color accentBlue = primaryLight;
+  static const Color accentTeal = Color(0xFF26A69A);
+  static const Color accentGreen = success;
+  static const Color accentOrange = warning;
+  static const Color accentRed = error;
 
   // Gradients
   static const LinearGradient primaryGradient = LinearGradient(
-    colors: [accentPurple, accentBlue],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
+    colors: [primary, primaryLight],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
   );
 
+  static const LinearGradient rewardGradient = LinearGradient(
+    colors: [reward, rewardDark],
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+  );
+
+  static Color flat(bool isDark) => isDark ? backgroundDark : background;
+
+  // Legacy — returns flat color wrapped in a gradient for Container decoration
   static LinearGradient backgroundGradient(bool isDark) {
-    return LinearGradient(
-      colors: isDark 
-        ? [backgroundTopDark, backgroundBottomDark]
-        : [backgroundTopLight, backgroundBottomLight],
-      begin: Alignment.topCenter,
-      end: Alignment.bottomCenter,
-    );
+    final c = isDark ? backgroundDark : background;
+    return LinearGradient(colors: [c, c]);
   }
+
+  // Shadows
+  static List<BoxShadow> cardShadow = [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.06),
+      blurRadius: 16,
+      offset: const Offset(0, 4),
+    ),
+    BoxShadow(
+      color: Colors.black.withOpacity(0.02),
+      blurRadius: 4,
+      offset: const Offset(0, 1),
+    ),
+  ];
+
+  static List<BoxShadow> elevatedShadow = [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.10),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
+}
+
+class DarisDecorations {
+  static const double cardRadius = 20;
+  static const double buttonRadius = 16;
+  static const double pillRadius = 24;
+  static const double chipRadius = 12;
+
+  static BoxDecoration card(bool isDark) => BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: BorderRadius.circular(cardRadius),
+        boxShadow: isDark ? null : AppColors.cardShadow,
+      );
+
+  static BoxDecoration elevatedCard(bool isDark) => BoxDecoration(
+        color: isDark ? AppColors.surfaceDark : AppColors.surface,
+        borderRadius: BorderRadius.circular(cardRadius),
+        boxShadow: isDark ? null : AppColors.elevatedShadow,
+      );
 }
 
 class AppTheme {
@@ -42,18 +109,20 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.light,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.accentPurple,
-        primary: AppColors.accentPurple,
-        secondary: AppColors.accentBlue,
-        background: AppColors.backgroundBottomLight,
+        seedColor: AppColors.primary,
+        primary: AppColors.primary,
+        secondary: AppColors.primaryLight,
+        surface: AppColors.surface,
       ),
-      textTheme: GoogleFonts.outfitTextTheme(),
+      scaffoldBackgroundColor: AppColors.background,
+      textTheme: GoogleFonts.nunitoTextTheme(),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentPurple,
+          backgroundColor: AppColors.primary,
           foregroundColor: Colors.white,
           textStyle: const TextStyle(fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(DarisDecorations.buttonRadius)),
         ),
       ),
     );
@@ -64,19 +133,21 @@ class AppTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.accentPurple,
+        seedColor: AppColors.primary,
         brightness: Brightness.dark,
-        primary: AppColors.accentPurple,
-        secondary: AppColors.accentBlue,
-        background: AppColors.backgroundBottomDark,
+        primary: Color(0xFF42A5F5),
+        secondary: Color(0xFF64B5F6),
+        surface: AppColors.surfaceDark,
       ),
-      textTheme: GoogleFonts.outfitTextTheme(ThemeData.dark().textTheme),
+      scaffoldBackgroundColor: AppColors.backgroundDark,
+      textTheme: GoogleFonts.nunitoTextTheme(ThemeData.dark().textTheme),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.accentPurple,
+          backgroundColor: Color(0xFF42A5F5),
           foregroundColor: Colors.white,
           textStyle: const TextStyle(fontWeight: FontWeight.bold),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(DarisDecorations.buttonRadius)),
         ),
       ),
     );

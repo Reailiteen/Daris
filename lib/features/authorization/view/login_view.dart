@@ -17,7 +17,7 @@ class LoginView extends GetView<AuthController> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+        decoration: BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
@@ -76,7 +76,7 @@ class LoginView extends GetView<AuthController> {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           controller.errorMessage.value!,
-                          style: const TextStyle(color: AppColors.accentRed),
+                          style: const TextStyle(color: AppColors.error),
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -109,7 +109,7 @@ class LoginView extends GetView<AuthController> {
                       child: const Text(
                         'Create Account',
                         style: TextStyle(
-                          color: AppColors.accentPurple,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

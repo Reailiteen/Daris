@@ -13,7 +13,7 @@ class AppSelectionView extends GetView<AppSelectionController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.backgroundGradient(isDark),
+        color: AppColors.flat(isDark),
       ),
       child: SafeArea(
         child: Padding(
@@ -66,13 +66,13 @@ class AppSelectionView extends GetView<AppSelectionController> {
           Container(
             padding: const EdgeInsets.all(32),
             decoration: BoxDecoration(
-              color: AppColors.accentPurple.withOpacity(0.1),
+              color: AppColors.primary.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.app_registration_rounded,
               size: 64,
-              color: AppColors.accentPurple,
+              color: AppColors.primary,
             ),
           ),
           const SizedBox(height: 24),

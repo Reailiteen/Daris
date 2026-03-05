@@ -12,7 +12,7 @@ class ActiveSessionCard extends GetView<HomeController> {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF3D3B8E), Color(0xFF5856D6), Color(0xFF3B89FA)],
+            colors: [Color(0xFF0D47A1), Color(0xFF1565C0), Color(0xFF1E88E5)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),

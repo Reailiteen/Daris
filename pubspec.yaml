@@ -21,6 +21,9 @@ dependencies:
   file_picker: ^8.1.2
   path_provider: ^2.1.2
   open_filex: ^4.4.0
+  flutter_animate: ^4.5.0
+  confetti: ^0.8.0
+  animated_flip_counter: ^0.3.4
 
 dev_dependencies:
   flutter_test:

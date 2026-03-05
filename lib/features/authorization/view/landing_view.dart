@@ -13,7 +13,7 @@ class LandingView extends StatelessWidget {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: AppColors.backgroundGradient(isDark),
+          color: AppColors.flat(isDark),
         ),
         child: SafeArea(
           child: Padding(
@@ -26,20 +26,20 @@ class LandingView extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.accentPurple.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.nights_stay_rounded,
+                    Icons.school_rounded,
                     size: 80,
-                    color: AppColors.accentPurple,
+                    color: AppColors.primary,
                   ),
                 ),
 
                 const SizedBox(height: 48),
 
                 Text(
-                  'FocusFlow',
+                  'Daris',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: isDark ? Colors.white : Colors.black87,
@@ -72,7 +72,7 @@ class LandingView extends StatelessWidget {
                     onPressed: () => Get.toNamed('/login'),
                     style: OutlinedButton.styleFrom(
                       side: BorderSide(
-                        color: AppColors.accentPurple.withOpacity(0.6),
+                        color: AppColors.primary.withOpacity(0.6),
                       ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -81,7 +81,7 @@ class LandingView extends StatelessWidget {
                     child: Text(
                       'Sign In',
                       style: TextStyle(
-                        color: AppColors.accentPurple,
+                        color: AppColors.primary,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -115,7 +115,7 @@ class _GradientButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accentPurple.withOpacity(0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

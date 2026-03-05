@@ -17,7 +17,7 @@ class HomeTab extends GetView<HomeController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.backgroundGradient(isDark),
+        color: AppColors.flat(isDark),
       ),
       child: SafeArea(
         child: SingleChildScrollView(

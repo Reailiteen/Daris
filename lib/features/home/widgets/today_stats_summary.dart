@@ -12,10 +12,7 @@ class TodayStatsSummary extends GetView<StatisticsController> {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -31,7 +28,7 @@ class TodayStatsSummary extends GetView<StatisticsController> {
                 icon: Icons.access_time_filled,
                 value: controller.totalFocusTime.value,
                 label: 'Focus time',
-                color: AppColors.accentPurple,
+                color: AppColors.primary,
               ),
               _VerticalDivider(),
               _StatItem(

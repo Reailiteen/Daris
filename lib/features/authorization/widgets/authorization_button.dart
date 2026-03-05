@@ -16,7 +16,7 @@ class AuthorizationButton extends GetView<AuthorizationController> {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: AppColors.accentPurple.withOpacity(0.3),
+            color: AppColors.primary.withOpacity(0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

@@ -16,7 +16,7 @@ class TasksView extends GetView<TasksController> {
       backgroundColor: Colors.transparent,
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+        decoration: BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -111,7 +111,7 @@ class TasksView extends GetView<TasksController> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddTaskSheet(context, isDark),
-        backgroundColor: AppColors.accentPurple,
+        backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
@@ -284,7 +284,7 @@ class TasksView extends GetView<TasksController> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: AppColors.accentPurple,
+                  backgroundColor: AppColors.primary,
                 ),
                 onPressed: () {
                   final title = titleController.text.trim();
@@ -319,11 +319,11 @@ class _TaskCard extends StatelessWidget {
   Color get _difficultyColor {
     switch (task.difficulty) {
       case TaskDifficulty.small:
-        return AppColors.accentTeal;
+        return AppColors.success;
       case TaskDifficulty.medium:
-        return AppColors.accentOrange;
+        return AppColors.warning;
       case TaskDifficulty.hard:
-        return AppColors.accentRed;
+        return AppColors.error;
     }
   }
 
@@ -333,17 +333,7 @@ class _TaskCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.07)
-            : Colors.white.withOpacity(0.8),
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.08)
-              : Colors.black.withOpacity(0.06),
-        ),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Row(
         children: [
           Expanded(

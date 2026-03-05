@@ -18,7 +18,7 @@ class EmailVerificationView extends GetView<AuthController> {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+        decoration: BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
@@ -29,13 +29,13 @@ class EmailVerificationView extends GetView<AuthController> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.accentBlue.withOpacity(0.1),
+                    color: AppColors.primaryLight.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
                     Icons.mark_email_unread_rounded,
                     size: 72,
-                    color: AppColors.accentBlue,
+                    color: AppColors.primaryLight,
                   ),
                 ),
 
@@ -66,7 +66,7 @@ class EmailVerificationView extends GetView<AuthController> {
                   Text(
                     email,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.accentPurple,
+                          color: AppColors.primary,
                           fontWeight: FontWeight.w600,
                         ),
                     textAlign: TextAlign.center,
@@ -89,7 +89,7 @@ class EmailVerificationView extends GetView<AuthController> {
                         padding: const EdgeInsets.only(bottom: 16.0),
                         child: Text(
                           controller.errorMessage.value!,
-                          style: const TextStyle(color: AppColors.accentRed),
+                          style: const TextStyle(color: AppColors.error),
                           textAlign: TextAlign.center,
                         ),
                       )
@@ -124,7 +124,7 @@ class EmailVerificationView extends GetView<AuthController> {
                   child: const Text(
                     'Wrong email? Go back',
                     style: TextStyle(
-                      color: AppColors.accentPurple,
+                      color: AppColors.primary,
                       fontSize: 14,
                     ),
                   ),

@@ -60,19 +60,7 @@ class StartSessionCard extends GetView<HomeController> {
     return ClipRRect(
       borderRadius: BorderRadius.circular(24),
       child: Container(
-        decoration: BoxDecoration(
-          color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.white.withOpacity(0.85),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.06),
-              blurRadius: 20,
-              offset: const Offset(0, 8),
-            ),
-          ],
-        ),
+        decoration: DarisDecorations.card(isDark),
         child: Column(
           children: [
             // Gradient header
@@ -141,7 +129,7 @@ class StartSessionCard extends GetView<HomeController> {
                 return Text(
                   count > 0 ? '$count selected' : 'None selected',
                   style: TextStyle(
-                    color: count > 0 ? AppColors.accentPurple : Colors.orange,
+                    color: count > 0 ? AppColors.primary : Colors.orange,
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
@@ -238,7 +226,7 @@ class _ConfigRow extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
           child: Row(
             children: [
-              Icon(icon, size: 20, color: AppColors.accentPurple),
+              Icon(icon, size: 20, color: AppColors.primary),
               const SizedBox(width: 14),
               Text(
                 label,
@@ -307,10 +295,10 @@ class _DurationPickerSheet extends StatelessWidget {
                   title: Text(d.displayName),
                   trailing: selected
                       ? const Icon(Icons.check_circle,
-                          color: AppColors.accentPurple)
+                          color: AppColors.primary)
                       : null,
                   tileColor: selected
-                      ? AppColors.accentPurple.withOpacity(0.08)
+                      ? AppColors.primary.withOpacity(0.08)
                       : null,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -372,14 +360,14 @@ class _DifficultyPickerSheet extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.accentPurple.withOpacity(0.1)
+                            ? AppColors.primary.withOpacity(0.1)
                             : isDark
                                 ? Colors.white.withOpacity(0.05)
                                 : Colors.grey.withOpacity(0.05),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: selected
-                              ? AppColors.accentPurple
+                              ? AppColors.primary
                               : Colors.transparent,
                           width: 1.5,
                         ),
@@ -412,7 +400,7 @@ class _DifficultyPickerSheet extends StatelessWidget {
                           ),
                           if (selected)
                             const Icon(Icons.check_circle,
-                                color: AppColors.accentPurple, size: 20),
+                                color: AppColors.primary, size: 20),
                         ],
                       ),
                     ),

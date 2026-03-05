@@ -19,7 +19,7 @@ class EarnTab extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      decoration: BoxDecoration(gradient: AppColors.backgroundGradient(isDark)),
+      decoration: BoxDecoration(color: AppColors.flat(isDark)),
       child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
@@ -103,7 +103,7 @@ class EarnTab extends StatelessWidget {
                     onTap: () => Get.toNamed('/tasks'),
                     child: Text('See all',
                         style: TextStyle(
-                            color: AppColors.accentPurple,
+                            color: AppColors.primary,
                             fontSize: 13,
                             fontWeight: FontWeight.w600)),
                   ),
@@ -202,7 +202,7 @@ class _BalanceCard extends StatelessWidget {
                   minHeight: 6,
                   backgroundColor: Colors.white.withOpacity(0.2),
                   valueColor:
-                      const AlwaysStoppedAnimation<Color>(Colors.white),
+                      const AlwaysStoppedAnimation<Color>(AppColors.success),
                 ),
               ),
             ] else ...[
@@ -230,14 +230,7 @@ class _UnlockHourCard extends StatelessWidget {
           Get.toNamed('/ai-questions', arguments: {'unlock': true}),
       child: Container(
         padding: const EdgeInsets.all(18),
-        decoration: BoxDecoration(
-          color: isDark
-              ? AppColors.accentPurple.withOpacity(0.15)
-              : AppColors.accentPurple.withOpacity(0.07),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-              color: AppColors.accentPurple.withOpacity(0.3), width: 1.5),
-        ),
+        decoration: DarisDecorations.elevatedCard(isDark),
         child: Row(
           children: [
             Container(
@@ -294,17 +287,7 @@ class _SubjectCardList extends StatelessWidget {
       if (ctrl.subjects.isEmpty) {
         return Container(
           padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: isDark
-                ? Colors.white.withOpacity(0.04)
-                : Colors.black.withOpacity(0.03),
-            borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isDark
-                  ? Colors.white.withOpacity(0.07)
-                  : Colors.black.withOpacity(0.06),
-            ),
-          ),
+          decoration: DarisDecorations.card(isDark),
           child: Row(
             children: [
               Icon(Icons.school_outlined,
@@ -343,17 +326,7 @@ class _SubjectCard extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(18),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.07)
-            : Colors.white.withOpacity(0.92),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(
-          color: isDark
-              ? Colors.white.withOpacity(0.1)
-              : AppColors.accentPurple.withOpacity(0.12),
-        ),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -364,11 +337,11 @@ class _SubjectCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(9),
                 decoration: BoxDecoration(
-                  color: AppColors.accentPurple.withOpacity(0.12),
+                  color: AppColors.success,
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.school_rounded,
-                    color: AppColors.accentPurple, size: 20),
+                child: const Icon(Icons.menu_book_rounded,
+                    color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -445,23 +418,23 @@ class _SubjectCard extends StatelessWidget {
                 if ((subject.numQuizzes as int) > 0)
                   _Pill(
                       '${subject.numQuizzes} Quiz${(subject.numQuizzes as int) > 1 ? "zes" : ""}',
-                      AppColors.accentTeal),
+                      AppColors.primary),
                 if ((subject.numAssignments as int) > 0)
                   _Pill(
                       '${subject.numAssignments} Assignment${(subject.numAssignments as int) > 1 ? "s" : ""}',
-                      AppColors.accentBlue),
+                      AppColors.success),
                 if ((subject.numMidterms as int) > 0)
                   _Pill(
                       '${subject.numMidterms} Midterm${(subject.numMidterms as int) > 1 ? "s" : ""}',
-                      AppColors.accentOrange),
+                      AppColors.reward),
                 if ((subject.numFinals as int) > 0)
                   _Pill(
                       '${subject.numFinals} Final${(subject.numFinals as int) > 1 ? "s" : ""}',
-                      AppColors.accentRed),
+                      AppColors.error),
                 if ((subject.numProjects as int) > 0)
                   _Pill(
                       '${subject.numProjects} Project${(subject.numProjects as int) > 1 ? "s" : ""}',
-                      AppColors.accentPurple),
+                      AppColors.primaryLight),
               ],
             ),
             const SizedBox(height: 8),
@@ -586,21 +559,11 @@ class _TasksPreview extends StatelessWidget {
           onTap: () => Get.toNamed('/tasks'),
           child: Container(
             padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.06),
-              ),
-            ),
+            decoration: DarisDecorations.card(isDark),
             child: Row(
               children: [
                 const Icon(Icons.add_circle_outline,
-                    color: AppColors.accentPurple, size: 22),
+                    color: AppColors.primary, size: 22),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -621,17 +584,7 @@ class _TasksPreview extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 8),
             padding:
                 const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.07)
-                  : Colors.white.withOpacity(0.85),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.06),
-              ),
-            ),
+            decoration: DarisDecorations.card(isDark),
             child: Row(
               children: [
                 Expanded(
@@ -690,12 +643,7 @@ class _RewardTable extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark
-            ? Colors.white.withOpacity(0.04)
-            : Colors.black.withOpacity(0.03),
-        borderRadius: BorderRadius.circular(14),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -746,7 +694,7 @@ class _RewardTable extends StatelessWidget {
               style: const TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w600,
-                  color: AppColors.accentPurple)),
+                  color: AppColors.primary)),
         ],
       ),
     );
@@ -946,7 +894,7 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
               padding: const EdgeInsets.symmetric(vertical: 14),
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12)),
-              backgroundColor: AppColors.accentPurple,
+              backgroundColor: AppColors.primary,
             ),
             onPressed: () {
               if (_nameCtrl.text.trim().isEmpty) return;
@@ -981,15 +929,15 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
                 color: isDark ? Colors.white54 : Colors.black45,
                 height: 1.4)),
         const SizedBox(height: 20),
-        _stepper('Quizzes', _quizzes, AppColors.accentTeal, isDark,
+        _stepper('Quizzes', _quizzes, AppColors.primary, isDark,
             (v) => setState(() => _quizzes = v)),
-        _stepper('Assignments', _assignments, AppColors.accentBlue, isDark,
+        _stepper('Assignments', _assignments, AppColors.success, isDark,
             (v) => setState(() => _assignments = v)),
-        _stepper('Midterms', _midterms, AppColors.accentOrange, isDark,
+        _stepper('Midterms', _midterms, AppColors.reward, isDark,
             (v) => setState(() => _midterms = v)),
-        _stepper('Finals', _finals, AppColors.accentRed, isDark,
+        _stepper('Finals', _finals, AppColors.error, isDark,
             (v) => setState(() => _finals = v)),
-        _stepper('Projects', _projects, AppColors.accentPurple, isDark,
+        _stepper('Projects', _projects, AppColors.primaryLight, isDark,
             (v) => setState(() => _projects = v)),
         if (_totalTasks > 0) ...[
           const SizedBox(height: 14),
@@ -1033,7 +981,7 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
-                  backgroundColor: AppColors.accentPurple,
+                  backgroundColor: AppColors.primary,
                 ),
                 onPressed: _save,
                 child: const Text('Save Subject',
