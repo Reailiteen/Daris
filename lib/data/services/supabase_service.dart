@@ -57,41 +57,21 @@ class SupabaseService extends GetxService {
   Future<void> saveUserSettings({
     required String userId,
     required int weeklyScreenTimeMinutes,
-    required String activityFocus,
     required List<String> blockingCategories,
   }) async {
-    await _supabase.from('user_settings').update({
+    final payload = {
       'weekly_screen_time_minutes': weeklyScreenTimeMinutes,
-      'activity_focus': activityFocus,
       'blocking_categories': blockingCategories,
       'updated_at': DateTime.now().toIso8601String(),
-    }).eq('user_id', userId);
-  }
-
-  // MARK: - Sports
-  
-  Future<List<Map<String, dynamic>>> getSports() async {
-    final response = await _supabase
-        .from('sports')
-        .select()
-        .eq('is_enabled', true);
-    return List<Map<String, dynamic>>.from(response);
-  }
-
-  // MARK: - Activities
-  
-  Future<void> logActivity(Map<String, dynamic> sessionData, List<Map<String, dynamic>> metrics) async {
-    final sessionResponse = await _supabase
-        .from('activity_sessions')
-        .insert(sessionData)
-        .select()
-        .single();
-    
-    final sessionId = sessionResponse['id'];
-    
-    if (metrics.isNotEmpty) {
-      final metricsWithSession = metrics.map((m) => {...m, 'session_id': sessionId}).toList();
-      await _supabase.from('activity_metrics').insert(metricsWithSession);
+    };
+    final existing = await getUserSettings(userId);
+    if (existing != null) {
+      await _supabase.from('user_settings').update(payload).eq('user_id', userId);
+    } else {
+      await _supabase.from('user_settings').insert({
+        'user_id': userId,
+        ...payload,
+      });
     }
   }
 

@@ -50,12 +50,12 @@ class OnboardingWizardView extends GetView<AuthController> {
                   children: [
                     Obx(() => _StepIndicator(
                           currentStep: controller.onboardingStep.value,
-                          totalSteps: 3,
+                          totalSteps: 2,
                           isDark: isDark,
                         )),
                     const SizedBox(height: 8),
                     Obx(() => Text(
-                          'Step ${controller.onboardingStep.value + 1} of 3',
+                          'Step ${controller.onboardingStep.value + 1} of 2',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isDark ? Colors.white38 : Colors.black38,
                               ),
@@ -71,8 +71,6 @@ class OnboardingWizardView extends GetView<AuthController> {
                     case 0:
                       return _Step1ScreenTime(isDark: isDark);
                     case 1:
-                      return _Step2ActivityFocus(isDark: isDark);
-                    case 2:
                       return _Step3BlockingCategories(
                           isDark: isDark,
                           categories: _categories,
@@ -105,11 +103,11 @@ class OnboardingWizardView extends GetView<AuthController> {
                       AuthGradientButton(
                         label: isLoading
                             ? null
-                            : (step < 2 ? 'Continue' : 'Get Started'),
+                            : (step < 1 ? 'Continue' : 'Get Started'),
                         onTap: isLoading
                             ? null
                             : () {
-                                if (step < 2) {
+                                if (step < 1) {
                                   controller.saveStepAndAdvance();
                                 } else {
                                   controller.finishOnboarding();
@@ -291,73 +289,7 @@ class _Step1ScreenTime extends GetView<AuthController> {
   }
 }
 
-// MARK: - Step 2: Activity Focus
-
-class _Step2ActivityFocus extends GetView<AuthController> {
-  const _Step2ActivityFocus({required this.isDark});
-  final bool isDark;
-
-  static const _options = [
-    ('workout', 'Workout', Icons.fitness_center_rounded,
-        AppColors.accentGreen,
-        'Earn screen time by logging workouts'),
-    ('study', 'Study', Icons.menu_book_rounded, AppColors.accentBlue,
-        'Earn screen time by completing study sessions'),
-    ('mixed', 'Mixed', Icons.auto_awesome_rounded, AppColors.accentPurple,
-        'Balance both workouts and study'),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            'Activity Focus',
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Text(
-            'How do you plan to earn your screen time?',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isDark ? Colors.white60 : Colors.black54,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 40),
-          Obx(() => Column(
-                children: _options.map((opt) {
-                  final (value, label, icon, color, description) = opt;
-                  final isSelected =
-                      controller.activityFocus.value == value;
-                  return Padding(
-                    padding: const EdgeInsets.only(bottom: 12.0),
-                    child: _SelectableCard(
-                      label: label,
-                      description: description,
-                      icon: icon,
-                      color: color,
-                      isSelected: isSelected,
-                      isDark: isDark,
-                      onTap: () =>
-                          controller.activityFocus.value = value,
-                    ),
-                  );
-                }).toList(),
-              )),
-        ],
-      ),
-    );
-  }
-}
-
-// MARK: - Step 3: Blocking Categories
+// MARK: - Step 2: Blocking Categories
 
 class _Step3BlockingCategories extends GetView<AuthController> {
   const _Step3BlockingCategories({
@@ -422,88 +354,6 @@ class _Step3BlockingCategories extends GetView<AuthController> {
                 }).toList(),
               )),
         ],
-      ),
-    );
-  }
-}
-
-// MARK: - Shared Widgets
-
-class _SelectableCard extends StatelessWidget {
-  const _SelectableCard({
-    required this.label,
-    required this.description,
-    required this.icon,
-    required this.color,
-    required this.isSelected,
-    required this.isDark,
-    required this.onTap,
-  });
-
-  final String label;
-  final String description;
-  final IconData icon;
-  final Color color;
-  final bool isSelected;
-  final bool isDark;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? color.withOpacity(0.12)
-              : (isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.black.withOpacity(0.03)),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: isSelected ? color : Colors.transparent,
-            width: 1.5,
-          ),
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    label,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    description,
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white54 : Colors.black54,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (isSelected)
-              Icon(Icons.check_circle_rounded, color: color, size: 20),
-          ],
-        ),
       ),
     );
   }

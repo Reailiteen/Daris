@@ -43,7 +43,7 @@ class TodayStatsSummary extends GetView<StatisticsController> {
               _VerticalDivider(),
               _StatItem(
                 icon: Icons.check_circle,
-                value: controller.allSessions.length.toString(),
+                value: '0',
                 label: 'All sessions',
                 color: Colors.green,
               ),

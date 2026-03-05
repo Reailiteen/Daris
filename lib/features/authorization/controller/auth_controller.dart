@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../data/services/focus_flow_service.dart';
@@ -16,7 +18,6 @@ class AuthController extends GetxController {
   // Onboarding wizard state
   final RxInt onboardingStep = 0.obs;
   final RxInt weeklyScreenTimeMinutes = 120.obs;
-  final RxString activityFocus = 'mixed'.obs;
   final RxList<String> blockingCategories = <String>[].obs;
 
   // Validation helpers
@@ -42,6 +43,30 @@ class AuthController extends GetxController {
 
   // MARK: - Registration
 
+  /// Returns a user-friendly message from an AuthException (handles JSON message / known codes).
+  static String _authExceptionMessage(AuthException e) {
+    String msg = e.message;
+    if (e.code == 'unexpected_failure' ||
+        msg.toLowerCase().contains('confirmation email')) {
+      return 'We couldn\'t send the confirmation email. Your account may still have been created—check your inbox or try signing in.';
+    }
+    // Supabase sometimes returns JSON in message
+    if (msg.trim().startsWith('{')) {
+      try {
+        final map = jsonDecode(msg) as Map<String, dynamic>;
+        final code = map['code'] as String?;
+        final message = map['message'] as String? ?? msg;
+        if (code == 'unexpected_failure' && message.toLowerCase().contains('email')) {
+          return 'We couldn\'t send the confirmation email. Check your inbox or try signing in—your account may already exist.';
+        }
+        return message;
+      } catch (_) {
+        /* fall through to raw message */
+      }
+    }
+    return msg;
+  }
+
   Future<void> register(String email, String password) async {
     isLoading.value = true;
     errorMessage.value = null;
@@ -49,7 +74,7 @@ class AuthController extends GetxController {
       await _supabaseService.signUp(email: email, password: password);
       Get.offAllNamed('/email-verification', arguments: {'email': email});
     } on AuthException catch (e) {
-      errorMessage.value = e.message;
+      errorMessage.value = _authExceptionMessage(e);
     } catch (_) {
       errorMessage.value = 'Registration failed. Please try again.';
     } finally {
@@ -66,7 +91,7 @@ class AuthController extends GetxController {
       await _supabaseService.signIn(email: email, password: password);
       await _navigateAfterAuth();
     } on AuthException catch (e) {
-      errorMessage.value = e.message;
+      errorMessage.value = _authExceptionMessage(e);
     } catch (_) {
       errorMessage.value = 'Sign in failed. Please try again.';
     } finally {
@@ -118,8 +143,6 @@ class AuthController extends GetxController {
       if (settings != null) {
         weeklyScreenTimeMinutes.value =
             settings['weekly_screen_time_minutes'] as int? ?? 120;
-        activityFocus.value =
-            settings['activity_focus'] as String? ?? 'mixed';
         final cats = settings['blocking_categories'];
         if (cats is List) {
           blockingCategories.assignAll(cats.cast<String>());
@@ -131,20 +154,23 @@ class AuthController extends GetxController {
   }
 
   Future<void> saveStepAndAdvance() async {
-    isLoading.value = true;
+    final user = _supabaseService.currentUser;
+    if (user == null) {
+      errorMessage.value = 'Session expired. Please sign in again.';
+      return;
+    }
     errorMessage.value = null;
+    // Advance step immediately so the user sees progress
+    onboardingStep.value++;
+    isLoading.value = true;
     try {
-      final user = _supabaseService.currentUser;
-      if (user == null) throw Exception('Not authenticated');
       await _supabaseService.saveUserSettings(
         userId: user.id,
         weeklyScreenTimeMinutes: weeklyScreenTimeMinutes.value,
-        activityFocus: activityFocus.value,
         blockingCategories: blockingCategories.toList(),
       );
-      onboardingStep.value++;
     } catch (_) {
-      errorMessage.value = 'Failed to save. Please try again.';
+      errorMessage.value = 'Settings couldn\'t be saved. You can change them later in Settings.';
     } finally {
       isLoading.value = false;
     }
@@ -159,7 +185,6 @@ class AuthController extends GetxController {
       await _supabaseService.saveUserSettings(
         userId: user.id,
         weeklyScreenTimeMinutes: weeklyScreenTimeMinutes.value,
-        activityFocus: activityFocus.value,
         blockingCategories: blockingCategories.toList(),
       );
       await _supabaseService.completeOnboarding(user.id);

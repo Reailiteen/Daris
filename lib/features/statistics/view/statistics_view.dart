@@ -122,14 +122,7 @@ class StatisticsView extends GetView<StatisticsController> {
   }
 
   Widget _buildHistoryList(BuildContext context, bool isDark) {
-    return Obx(() {
-      if (controller.allSessions.isEmpty) {
-        return const Center(child: Text('No sessions recorded', style: TextStyle(color: Colors.grey)));
-      }
-      return Column(
-        children: controller.allSessions.map((s) => _HistoryItem(session: s)).toList(),
-      );
-    });
+    return const Center(child: Text('No sessions recorded', style: TextStyle(color: Colors.grey)));
   }
 }
 
