@@ -17,6 +17,10 @@ class SupabaseService extends GetxService {
     return await _supabase.auth.signInWithPassword(email: email, password: password);
   }
 
+  Future<void> signOut() async {
+    await _supabase.auth.signOut();
+  }
+
   Future<void> resendVerificationEmail(String email) async {
     await _supabase.auth.resend(type: OtpType.signup, email: email);
   }
@@ -34,6 +38,13 @@ class SupabaseService extends GetxService {
         .eq('id', userId)
         .single();
     return response;
+  }
+
+  Future<void> updateProfileDisplayName(String userId, String name) async {
+    await _supabase.from('profiles').update({
+      'display_name': name,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', userId);
   }
 
   Future<void> completeOnboarding(String userId) async {

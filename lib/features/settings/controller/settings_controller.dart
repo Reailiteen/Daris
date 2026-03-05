@@ -1,13 +1,47 @@
 import 'package:get/get.dart';
+import '../../../data/services/supabase_service.dart';
 
 class SettingsController extends GetxController {
-  // final FocusFlowService _service = Get.find<FocusFlowService>();
+  final SupabaseService _supabaseService = Get.find<SupabaseService>();
 
   final RxBool notificationsEnabled = true.obs;
+  final RxString displayName = ''.obs;
+  final RxString email = ''.obs;
+  final RxBool profileLoading = false.obs;
 
-  Future<void> revokeAuthorization() async {
-    // Platform channel call for revoking
-    // Note: iOS FamilyControls doesn't have a direct 'revoke' via API that's standard,
-    // usually users do it in Settings, but the ViewModel had a revoke method.
+  @override
+  void onInit() {
+    super.onInit();
+    loadProfile();
   }
+
+  Future<void> loadProfile() async {
+    email.value = _supabaseService.currentUser?.email ?? '';
+    final userId = _supabaseService.currentUser?.id;
+    if (userId == null) return;
+    profileLoading.value = true;
+    try {
+      final profile = await _supabaseService.getProfile(userId);
+      if (profile != null) {
+        displayName.value = (profile['display_name'] as String?) ?? '';
+      }
+    } catch (_) {
+    } finally {
+      profileLoading.value = false;
+    }
+  }
+
+  Future<void> updateDisplayName(String name) async {
+    final userId = _supabaseService.currentUser?.id;
+    if (userId == null || name.trim().isEmpty) return;
+    await _supabaseService.updateProfileDisplayName(userId, name.trim());
+    displayName.value = name.trim();
+  }
+
+  Future<void> signOut() async {
+    await _supabaseService.signOut();
+    Get.offAllNamed('/landing');
+  }
+
+  Future<void> revokeAuthorization() async {}
 }

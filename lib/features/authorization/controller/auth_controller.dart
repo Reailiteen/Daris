@@ -17,9 +17,11 @@ class AuthController extends GetxController {
 
   // Onboarding wizard state
   final RxInt onboardingStep = 0.obs;
+  final RxString firstName = ''.obs;
   final RxInt weeklyScreenTimeMinutes = 120.obs;
   final RxList<String> blockingCategories = <String>[].obs;
-  final RxList<String> subjectNames = <String>[].obs;
+  // Each map: {name, syllabusBook, numQuizzes, numAssignments, numMidterms, numFinals, numProjects}
+  final RxList<Map<String, dynamic>> onboardingSubjects = <Map<String, dynamic>>[].obs;
 
   // Validation helpers
   String? validateEmail(String? value) {
@@ -154,27 +156,17 @@ class AuthController extends GetxController {
     }
   }
 
-  Future<void> saveStepAndAdvance() async {
-    final user = _supabaseService.currentUser;
-    if (user == null) {
-      errorMessage.value = 'Session expired. Please sign in again.';
-      return;
-    }
+  void advanceStep() {
     errorMessage.value = null;
-    // Advance step immediately so the user sees progress
     onboardingStep.value++;
-    isLoading.value = true;
-    try {
-      await _supabaseService.saveUserSettings(
-        userId: user.id,
-        weeklyScreenTimeMinutes: weeklyScreenTimeMinutes.value,
-        blockingCategories: blockingCategories.toList(),
-      );
-    } catch (_) {
-      errorMessage.value = 'Settings couldn\'t be saved. You can change them later in Settings.';
-    } finally {
-      isLoading.value = false;
-    }
+  }
+
+  void addOnboardingSubject(Map<String, dynamic> subject) {
+    onboardingSubjects.add(subject);
+  }
+
+  void removeOnboardingSubject(int index) {
+    onboardingSubjects.removeAt(index);
   }
 
   Future<void> finishOnboarding() async {
@@ -183,22 +175,33 @@ class AuthController extends GetxController {
     try {
       final user = _supabaseService.currentUser;
       if (user == null) throw Exception('Not authenticated');
+
       await _supabaseService.saveUserSettings(
         userId: user.id,
         weeklyScreenTimeMinutes: weeklyScreenTimeMinutes.value,
         blockingCategories: blockingCategories.toList(),
       );
-      // Save subjects collected in step 2
-      for (final name in subjectNames) {
+
+      if (firstName.value.trim().isNotEmpty) {
+        await _supabaseService.updateProfileDisplayName(
+            user.id, firstName.value.trim());
+      }
+
+      for (final s in onboardingSubjects) {
         try {
           await _supabaseService.insertSubject(
             userId: user.id,
-            name: name,
+            name: s['name'] as String,
+            syllabusBook: s['syllabusBook'] as String?,
+            numQuizzes: (s['numQuizzes'] as int?) ?? 0,
+            numAssignments: (s['numAssignments'] as int?) ?? 0,
+            numMidterms: (s['numMidterms'] as int?) ?? 0,
+            numFinals: (s['numFinals'] as int?) ?? 0,
+            numProjects: (s['numProjects'] as int?) ?? 0,
           );
-        } catch (_) {
-          // skip individual subject errors
-        }
+        } catch (_) {}
       }
+
       await _supabaseService.completeOnboarding(user.id);
       Get.offAllNamed('/onboarding');
     } catch (_) {
@@ -207,6 +210,9 @@ class AuthController extends GetxController {
       isLoading.value = false;
     }
   }
+
+  // Keep for backward compatibility (no-op — saving now happens only in finishOnboarding)
+  Future<void> saveStepAndAdvance() async => advanceStep();
 
   void toggleBlockingCategory(String category) {
     if (blockingCategories.contains(category)) {
