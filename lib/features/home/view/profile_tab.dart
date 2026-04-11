@@ -18,78 +18,61 @@ class ProfileTab extends StatelessWidget {
       decoration: BoxDecoration(color: AppColors.flat(isDark)),
       child: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ── Profile header ────────────────────────────
-              _ProfileHeader(isDark: isDark),
-              const SizedBox(height: 24),
+              // ── Hero header ───────────────────────────────
+              _ProfileHero(isDark: isDark),
 
-              // ── Balance summary ───────────────────────────
-              _BalanceSummaryCard(isDark: isDark),
-              const SizedBox(height: 24),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // ── Stats grid ────────────────────────────────
+                    _StatsGrid(isDark: isDark),
+                    const SizedBox(height: 24),
 
-              // ── Weekly activity ───────────────────────────
-              Text(
-                'Weekly Activity',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              _ChartCard(isDark: isDark),
-              const SizedBox(height: 24),
-
-              // ── Streak & stats ────────────────────────────
-              Row(
-                children: [
-                  Expanded(
-                    child: _InfoCard(
-                      title: 'Current Streak',
-                      value: '0 days',
-                      icon: Icons.local_fire_department_rounded,
-                      color: AppColors.reward,
-                      isDark: isDark,
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _InfoCard(
-                      title: 'Avg. Daily',
-                      value: '0 min',
-                      icon: Icons.timer_rounded,
-                      color: AppColors.primary,
-                      isDark: isDark,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-
-              // ── Recent sessions placeholder ───────────────
-              Text(
-                'Recent Sessions',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: DarisDecorations.card(isDark),
-                child: Center(
-                  child: Text('No sessions recorded yet',
+                    // ── Weekly activity ───────────────────────────
+                    Text(
+                      'Weekly Activity',
                       style: TextStyle(
-                          color: isDark ? Colors.white38 : Colors.black38,
-                          fontSize: 14)),
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _ChartCard(isDark: isDark),
+                    const SizedBox(height: 24),
+
+                    // ── Recent sessions ───────────────────────────
+                    Text(
+                      'Recent Sessions',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: DarisDecorations.card(isDark),
+                      child: Center(
+                        child: Text(
+                          'No sessions recorded yet',
+                          style: TextStyle(
+                            color: isDark ? Colors.white38 : Colors.black38,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 100),
+                  ],
                 ),
               ),
-              const SizedBox(height: 100),
             ],
           ),
         ),
@@ -99,93 +82,112 @@ class ProfileTab extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Profile header — avatar, name, email, gear
+// Hero header — gradient banner, avatar, name, email, settings
 // ─────────────────────────────────────────────
 
-class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader({required this.isDark});
+class _ProfileHero extends StatelessWidget {
+  const _ProfileHero({required this.isDark});
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
     final settings = Get.find<SettingsController>();
 
-    return Obx(() {
-      final name = settings.displayName.value;
-      final mail = settings.email.value;
-      final initials = _initials(name, mail);
-
-      return Row(
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.primary,
+            AppColors.primary.withValues(alpha: 0.85),
+            AppColors.flat(isDark),
+          ],
+          stops: const [0.0, 0.55, 1.0],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(32)),
+      ),
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Avatar
-          Container(
-            width: 56,
-            height: 56,
-            decoration: const BoxDecoration(
-              gradient: AppColors.primaryGradient,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                initials,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold),
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-
-          // Name + email
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  name.isNotEmpty ? name : 'Welcome!',
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87),
+          // Top row: settings button
+          Row(
+            children: [
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.settings_outlined,
+                    color: Colors.white, size: 22),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const _SettingsPage()),
                 ),
-                if (mail.isNotEmpty)
-                  Text(
-                    mail,
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: isDark ? Colors.white38 : Colors.black45),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-              ],
-            ),
+              ),
+            ],
           ),
+          const SizedBox(height: 8),
 
-          // Gear → settings
-          GestureDetector(
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute(
-                  builder: (_) => const _SettingsPage()),
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(9),
-              decoration: BoxDecoration(
-                color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.05),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.settings_rounded,
-                color: isDark ? Colors.white60 : Colors.black54,
-                size: 22,
-              ),
-            ),
+          // Avatar + name + email centred
+          Center(
+            child: Obx(() {
+              final name = settings.displayName.value;
+              final mail = settings.email.value;
+              final initials = _initials(name, mail);
+              return Column(
+                children: [
+                  // 72x72 gradient avatar
+                  Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(36),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.primary.withValues(alpha: 0.30),
+                          blurRadius: 20,
+                          offset: const Offset(0, 6),
+                        ),
+                      ],
+                    ),
+                    child: Center(
+                      child: Text(
+                        initials,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    name.isNotEmpty ? name : 'Welcome!',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  if (mail.isNotEmpty)
+                    Text(
+                      mail,
+                      style: const TextStyle(
+                        color: AppColors.textSecondaryDark,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              );
+            }),
           ),
         ],
-      );
-    });
+      ),
+    );
   }
 
   String _initials(String name, String mail) {
@@ -202,7 +204,7 @@ class _ProfileHeader extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Settings page — pushed from gear icon
+// Settings page — pushed from hero gear icon
 // ─────────────────────────────────────────────
 
 class _SettingsPage extends StatelessWidget {
@@ -215,36 +217,35 @@ class _SettingsPage extends StatelessWidget {
     return Scaffold(
       body: Container(
         width: double.infinity,
-        decoration:
-            BoxDecoration(color: AppColors.flat(isDark)),
+        decoration: BoxDecoration(color: AppColors.flat(isDark)),
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Back + title row
               Padding(
                 padding: const EdgeInsets.fromLTRB(4, 8, 24, 0),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: Icon(Icons.arrow_back_ios_new_rounded,
-                          color: isDark ? Colors.white : Colors.black87,
-                          size: 20),
+                      icon: Icon(
+                        Icons.arrow_back_ios_new_rounded,
+                        color: isDark ? Colors.white : Colors.black87,
+                        size: 20,
+                      ),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                     Text(
                       'Settings',
                       style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87),
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 8),
-
-              // Settings content
               const Expanded(child: SettingsView()),
             ],
           ),
@@ -255,11 +256,11 @@ class _SettingsPage extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────
-// Balance summary card
+// 2x2 stats grid
 // ─────────────────────────────────────────────
 
-class _BalanceSummaryCard extends StatelessWidget {
-  const _BalanceSummaryCard({required this.isDark});
+class _StatsGrid extends StatelessWidget {
+  const _StatsGrid({required this.isDark});
   final bool isDark;
 
   @override
@@ -267,67 +268,115 @@ class _BalanceSummaryCard extends StatelessWidget {
     final balance = Get.find<BalanceController>();
 
     return Obx(() {
-      final earned = balance.earnedMinutesThisWeek.value;
-      final progress = (earned / 300).clamp(0.0, 1.0);
-      return Container(
-        padding: const EdgeInsets.all(18),
-        decoration: DarisDecorations.card(isDark),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                gradient: AppColors.primaryGradient,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Icon(Icons.phone_android_rounded,
-                  color: Colors.white, size: 22),
-            ),
-            const SizedBox(width: 14),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    balance.isUnlimited
-                        ? 'Unlimited!'
-                        : balance.formattedBalance,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    balance.isUnlimited
-                        ? 'Weekly milestone reached 🎉'
-                        : '$earned / 300 min this week',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: isDark ? Colors.white38 : Colors.black45),
-                  ),
-                  if (!balance.isUnlimited) ...[
-                    const SizedBox(height: 8),
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
-                      child: LinearProgressIndicator(
-                        value: progress,
-                        minHeight: 4,
-                        backgroundColor: isDark
-                            ? Colors.white.withOpacity(0.1)
-                            : Colors.black.withOpacity(0.06),
-                        valueColor: const AlwaysStoppedAnimation<Color>(
-                            AppColors.success),
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          ],
-        ),
+      final balanceValue = balance.isUnlimited
+          ? 'Unlimited'
+          : balance.formattedBalance;
+
+      return GridView.count(
+        crossAxisCount: 2,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        mainAxisSpacing: 12,
+        crossAxisSpacing: 12,
+        childAspectRatio: 1.5,
+        children: [
+          _StatCard(
+            icon: Icons.local_fire_department_rounded,
+            color: AppColors.reward,
+            label: 'Streak',
+            value: '0 days',
+            isDark: isDark,
+          ),
+          _StatCard(
+            icon: Icons.timer_rounded,
+            color: AppColors.primary,
+            label: 'Balance',
+            value: balanceValue,
+            isDark: isDark,
+          ),
+          _StatCard(
+            icon: Icons.school_rounded,
+            color: AppColors.success,
+            label: 'Sessions',
+            value: '0',
+            isDark: isDark,
+          ),
+          _StatCard(
+            icon: Icons.trending_up_rounded,
+            color: AppColors.warning,
+            label: 'Avg Daily',
+            value: '0 min',
+            isDark: isDark,
+          ),
+        ],
       );
     });
+  }
+}
+
+// ─────────────────────────────────────────────
+// Individual stat card
+// ─────────────────────────────────────────────
+
+class _StatCard extends StatelessWidget {
+  const _StatCard({
+    required this.icon,
+    required this.color,
+    required this.label,
+    required this.value,
+    required this.isDark,
+  });
+
+  final IconData icon;
+  final Color color;
+  final String label;
+  final String value;
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: DarisDecorations.card(isDark),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, color: color, size: 18),
+              const Spacer(),
+              Container(
+                width: 28,
+                height: 28,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(icon, color: color, size: 14),
+              ),
+            ],
+          ),
+          const Spacer(),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: isDark
+                  ? AppColors.textSecondaryDark
+                  : AppColors.textSecondaryLight,
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 
@@ -342,9 +391,9 @@ class _ChartCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 200,
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-      decoration: DarisDecorations.card(isDark),
+      height: 216,
+      padding: const EdgeInsets.all(16),
+      decoration: DarisDecorations.elevatedCard(isDark),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
@@ -361,21 +410,24 @@ class _ChartCard extends StatelessWidget {
           gridData: const FlGridData(show: false),
           borderData: FlBorderData(show: false),
           titlesData: FlTitlesData(
-            leftTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            rightTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-            topTitles:
-                const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+            leftTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+            rightTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
+            topTitles: const AxisTitles(
+                sideTitles: SideTitles(showTitles: false)),
             bottomTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 getTitlesWidget: (v, _) {
                   const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-                  return Text(days[v.toInt()],
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: isDark ? Colors.white38 : Colors.black38));
+                  return Text(
+                    days[v.toInt()],
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: isDark ? Colors.white38 : Colors.black38,
+                    ),
+                  );
                 },
               ),
             ),
@@ -397,53 +449,10 @@ class _ChartCard extends StatelessWidget {
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 60,
-            color: Colors.grey.withOpacity(0.08),
+            color: Colors.grey.withValues(alpha: 0.08),
           ),
         ),
       ],
-    );
-  }
-}
-
-// ─────────────────────────────────────────────
-// Info card (streak / avg daily)
-// ─────────────────────────────────────────────
-
-class _InfoCard extends StatelessWidget {
-  const _InfoCard({
-    required this.title,
-    required this.value,
-    required this.icon,
-    required this.color,
-    required this.isDark,
-  });
-  final String title;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final bool isDark;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: DarisDecorations.card(isDark),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 10),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: isDark ? Colors.white : Colors.black87)),
-          Text(title,
-              style: TextStyle(
-                  color: isDark ? Colors.white38 : Colors.black45,
-                  fontSize: 12)),
-        ],
-      ),
     );
   }
 }

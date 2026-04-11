@@ -9,133 +9,228 @@ class EmailVerificationView extends GetView<AuthController> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     // Arguments are set when navigating programmatically; fall back to the
     // current user's email when this is the initialRoute on app start.
     final email = (Get.arguments as Map?)?['email'] as String?
         ?? controller.currentUserEmail;
 
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(color: AppColors.flat(isDark)),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 40.0),
-            child: Column(
-              children: [
-                const Spacer(),
+      backgroundColor: AppColors.backgroundDark,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0, vertical: 40.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const SizedBox(height: 24),
 
-                Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryLight.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.mark_email_unread_rounded,
-                    size: 72,
-                    color: AppColors.primaryLight,
-                  ),
+              // Icon container
+              Container(
+                width: 80,
+                height: 80,
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(24),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                      blurRadius: 28,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 40),
-
-                Text(
-                  'Verify your email',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: isDark ? Colors.white : Colors.black87,
-                      ),
-                  textAlign: TextAlign.center,
+                child: const Icon(
+                  Icons.mark_email_read_rounded,
+                  color: Colors.white,
+                  size: 42,
                 ),
+              ),
 
-                const SizedBox(height: 16),
+              const SizedBox(height: 32),
 
-                Text(
-                  'We sent a verification link to',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: isDark ? Colors.white60 : Colors.black54,
-                      ),
-                  textAlign: TextAlign.center,
+              // Title
+              const Text(
+                'Check your inbox',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: -0.5,
                 ),
+              ),
 
-                const SizedBox(height: 6),
+              const SizedBox(height: 12),
 
-                if (email.isNotEmpty)
-                  Text(
-                    email,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: AppColors.primary,
-                          fontWeight: FontWeight.w600,
+              // Subtitle with email
+              Text(
+                email.isNotEmpty
+                    ? 'We sent a verification link to\n$email'
+                    : 'We sent a verification link to your email.',
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.textSecondaryDark,
+                  height: 1.5,
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Step hints card
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceDark,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Column(
+                  children: const [
+                    _StepHint(
+                      number: '1',
+                      text: 'Open the email we sent you',
+                    ),
+                    SizedBox(height: 16),
+                    _StepHint(
+                      number: '2',
+                      text: 'Tap the verification link inside',
+                    ),
+                    SizedBox(height: 16),
+                    _StepHint(
+                      number: '3',
+                      text: 'Come back here and tap the button below',
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Error message
+              Obx(() => controller.errorMessage.value != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Text(
+                        controller.errorMessage.value!,
+                        style: const TextStyle(
+                          color: AppColors.error,
+                          fontSize: 13,
                         ),
-                    textAlign: TextAlign.center,
-                  ),
-
-                const SizedBox(height: 16),
-
-                Text(
-                  'Click the link in the email, then come back and tap the button below.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: isDark ? Colors.white38 : Colors.black38,
+                        textAlign: TextAlign.center,
                       ),
-                  textAlign: TextAlign.center,
-                ),
+                    )
+                  : const SizedBox.shrink()),
 
-                const Spacer(),
+              // Verified CTA
+              Obx(() => AuthGradientButton(
+                    label: controller.isLoading.value
+                        ? null
+                        : "I've verified my email",
+                    onTap: controller.isLoading.value
+                        ? null
+                        : controller.checkEmailVerified,
+                  )),
 
-                Obx(() => controller.errorMessage.value != null
-                    ? Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Text(
-                          controller.errorMessage.value!,
-                          style: const TextStyle(color: AppColors.error),
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : const SizedBox.shrink()),
+              const SizedBox(height: 16),
 
-                Obx(() => AuthGradientButton(
-                      label: controller.isLoading.value
-                          ? null
-                          : 'I\'ve verified my email',
-                      onTap: controller.isLoading.value
-                          ? null
-                          : controller.checkEmailVerified,
-                    )),
-
-                const SizedBox(height: 16),
-
-                TextButton(
+              // Resend button
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: OutlinedButton(
                   onPressed: () => controller.resendVerificationEmail(email),
-                  child: Text(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(
+                      color: AppColors.primary.withValues(alpha: 0.40),
+                      width: 1.5,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                  ),
+                  child: const Text(
                     'Resend verification email',
                     style: TextStyle(
-                      color: isDark ? Colors.white54 : Colors.black54,
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 8),
-
-                TextButton(
-                  onPressed: () => Get.offAllNamed('/landing'),
-                  child: const Text(
-                    'Wrong email? Go back',
-                    style: TextStyle(
                       color: AppColors.primary,
-                      fontSize: 14,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),
+              ),
 
-                const SizedBox(height: 16),
-              ],
-            ),
+              const SizedBox(height: 12),
+
+              // Open mail / go back
+              TextButton(
+                onPressed: () => Get.offAllNamed('/landing'),
+                child: const Text(
+                  'Wrong email? Go back',
+                  style: TextStyle(
+                    color: AppColors.textSecondaryDark,
+                    fontSize: 14,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+            ],
           ),
         ),
       ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Step hint row
+// ---------------------------------------------------------------------------
+
+class _StepHint extends StatelessWidget {
+  const _StepHint({required this.number, required this.text});
+
+  final String number;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 26,
+          height: 26,
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          alignment: Alignment.center,
+          child: Text(
+            number,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: AppColors.primary,
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Text(
+              text,
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondaryDark,
+                height: 1.4,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

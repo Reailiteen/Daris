@@ -151,7 +151,7 @@ class SettingsView extends GetView<SettingsController> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E2228) : Colors.white,
+        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Display Name',
             style: TextStyle(
@@ -204,7 +204,7 @@ class SettingsView extends GetView<SettingsController> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        backgroundColor: isDark ? const Color(0xFF1E2228) : Colors.white,
+        backgroundColor: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
         title: Text('Sign Out',
             style: TextStyle(

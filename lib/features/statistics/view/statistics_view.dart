@@ -155,37 +155,3 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-class _HistoryItem extends StatelessWidget {
-  final dynamic session;
-
-  const _HistoryItem({required this.session});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: DarisDecorations.card(isDark),
-      child: Row(
-        children: [
-          Icon(
-            session.completedSuccessfully ? Icons.check_circle : Icons.cancel,
-            color: session.completedSuccessfully ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(session.formattedDate, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text('${session.formattedDuration} focused', style: const TextStyle(color: Colors.grey)),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right, color: Colors.grey),
-        ],
-      ),
-    );
-  }
-}

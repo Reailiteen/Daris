@@ -54,6 +54,13 @@ class SupabaseService extends GetxService {
     }).eq('id', userId);
   }
 
+  Future<void> markWalkthroughComplete(String userId) async {
+    await _supabase.from('profiles').update({
+      'walkthrough_complete': true,
+      'updated_at': DateTime.now().toIso8601String(),
+    }).eq('id', userId);
+  }
+
   // MARK: - User Settings
 
   Future<Map<String, dynamic>?> getUserSettings(String userId) async {

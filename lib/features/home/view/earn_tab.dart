@@ -5,6 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
 import '../../../core/theme/app_theme.dart';
+import '../walkthrough_keys.dart';
 import '../../../data/models/study_task.dart';
 import '../../balance/controller/balance_controller.dart';
 import '../../tasks/controller/tasks_controller.dart';
@@ -26,40 +27,29 @@ class EarnTab extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Earn',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: isDark ? Colors.white : Colors.black87,
-                    ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                'Study to earn screen time',
-                style: TextStyle(
-                    fontSize: 14,
-                    color: isDark ? Colors.white54 : Colors.black45),
-              ),
+              _EarnHeader(isDark: isDark),
               const SizedBox(height: 20),
 
-              _BalanceCard(isDark: isDark),
-              const SizedBox(height: 16),
+              _HeroBalanceCard(isDark: isDark),
+              const SizedBox(height: 14),
 
               _UnlockHourCard(isDark: isDark),
               const SizedBox(height: 28),
 
-              // Subjects
+              // Subjects header
               Row(
                 children: [
                   Text(
                     'My Subjects',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
                   const Spacer(),
                   GestureDetector(
+                    key: WalkthroughKeys.addSubjectBtn,
                     onTap: () => _showAddSubjectSheet(context, isDark),
                     child: Container(
                       padding: const EdgeInsets.symmetric(
@@ -88,15 +78,16 @@ class EarnTab extends StatelessWidget {
               _SubjectCardList(isDark: isDark),
               const SizedBox(height: 28),
 
-              // Pending tasks
+              // Pending tasks header
               Row(
                 children: [
                   Text(
                     'Pending Tasks',
-                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w700,
+                      color: isDark ? Colors.white : Colors.black87,
+                    ),
                   ),
                   const Spacer(),
                   GestureDetector(
@@ -132,10 +123,78 @@ class EarnTab extends StatelessWidget {
   }
 }
 
-// MARK: - Balance Card
+// MARK: - Earn Header
 
-class _BalanceCard extends StatelessWidget {
-  const _BalanceCard({required this.isDark});
+class _EarnHeader extends StatelessWidget {
+  const _EarnHeader({required this.isDark});
+  final bool isDark;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Earn',
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.w800,
+                color: isDark ? Colors.white : AppColors.textPrimaryLight,
+                letterSpacing: -0.8,
+              ),
+            ),
+            const SizedBox(height: 2),
+            Text(
+              'Study hard. Unlock more.',
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight,
+              ),
+            ),
+          ],
+        ),
+        const Spacer(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.12),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: AppColors.primary.withValues(alpha: 0.25),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.calendar_today_rounded,
+                  color: AppColors.primary, size: 13),
+              const SizedBox(width: 6),
+              const Text(
+                'This Week',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// MARK: - Hero Balance Card
+
+class _HeroBalanceCard extends StatelessWidget {
+  const _HeroBalanceCard({required this.isDark});
   final bool isDark;
 
   @override
@@ -143,72 +202,192 @@ class _BalanceCard extends StatelessWidget {
     final balance = Get.find<BalanceController>();
     return Obx(() {
       final earned = balance.earnedMinutesThisWeek.value;
+      final hours = earned ~/ 60;
+      final minutes = earned % 60;
       final progress = (earned / 300).clamp(0.0, 1.0);
+      final sessionsCompleted = 0;
+      const sessionsGoal = 5;
+
       return Container(
-        padding: const EdgeInsets.all(20),
+        width: double.infinity,
         decoration: BoxDecoration(
           gradient: AppColors.primaryGradient,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(24),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.primary.withValues(alpha: 0.30),
+              blurRadius: 24,
+              offset: const Offset(0, 8),
+            ),
+          ],
         ),
+        padding: const EdgeInsets.all(24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Top row — label + badge
             Row(
               children: [
-                const Icon(Icons.phone_android_rounded,
-                    color: Colors.white70, size: 18),
-                const SizedBox(width: 6),
-                const Text('Screen Time Balance',
-                    style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 13,
-                        fontWeight: FontWeight.w500)),
+                const Text(
+                  'Screen Time Balance',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.white60,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
                 const Spacer(),
                 if (balance.isUnlimited)
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
+                      color: Colors.white.withValues(alpha: 0.08),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text('UNLIMITED',
-                        style: TextStyle(
-                            color: Colors.white,
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.all_inclusive_rounded,
+                            color: Colors.white54, size: 12),
+                        SizedBox(width: 4),
+                        Text(
+                          'unlimited',
+                          style: TextStyle(
+                            color: Colors.white54,
                             fontSize: 11,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 0.5)),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.access_time_rounded,
+                            color: Colors.white54, size: 12),
+                        SizedBox(width: 4),
+                        Text(
+                          'earned',
+                          style: TextStyle(
+                            color: Colors.white54,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
               ],
             ),
             const SizedBox(height: 12),
-            Text(
-              balance.isUnlimited ? 'Unlimited!' : balance.formattedBalance,
-              style: const TextStyle(
+            // Large balance display
+            if (balance.isUnlimited)
+              const Text(
+                'Unlimited!',
+                style: TextStyle(
                   color: Colors.white,
-                  fontSize: 36,
-                  fontWeight: FontWeight.bold),
-            ),
-            if (!balance.isUnlimited) ...[
-              const SizedBox(height: 4),
-              Text('earned this week  ·  ${300 - earned}m until unlimited',
-                  style:
-                      const TextStyle(color: Colors.white60, fontSize: 12)),
-              const SizedBox(height: 14),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 6,
-                  backgroundColor: Colors.white.withOpacity(0.2),
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(AppColors.success),
+                  fontSize: 52,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -2,
                 ),
+              )
+            else
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    '$hours',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 52,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -2,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'hr',
+                      style: TextStyle(
+                        color: Colors.white60,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '$minutes',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 52,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: -2,
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  const Padding(
+                    padding: EdgeInsets.only(bottom: 8),
+                    child: Text(
+                      'min',
+                      style: TextStyle(
+                        color: Colors.white60,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 16),
+            // Progress section
+            if (!balance.isUnlimited) ...[
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Weekly goal',
+                        style: TextStyle(color: Colors.white54, fontSize: 12),
+                      ),
+                      const Spacer(),
+                      Text(
+                        '$sessionsCompleted / $sessionsGoal sessions',
+                        style: const TextStyle(
+                            color: Colors.white54, fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(6),
+                    child: LinearProgressIndicator(
+                      value: progress,
+                      backgroundColor: Colors.white.withValues(alpha: 0.08),
+                      valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.primary),
+                      minHeight: 6,
+                    ),
+                  ),
+                ],
               ),
             ] else ...[
-              const SizedBox(height: 4),
-              const Text('Weekly milestone reached! Enjoy your week.',
-                  style: TextStyle(color: Colors.white70, fontSize: 12)),
+              const Text(
+                'Weekly milestone reached! Enjoy your week.',
+                style: TextStyle(color: Colors.white60, fontSize: 12),
+              ),
             ],
           ],
         ),
@@ -408,8 +587,8 @@ class _SubjectCard extends StatelessWidget {
             Container(
                 height: 1,
                 color: isDark
-                    ? Colors.white.withOpacity(0.08)
-                    : Colors.black.withOpacity(0.06)),
+                    ? Colors.white.withValues(alpha: 0.08)
+                    : Colors.black.withValues(alpha: 0.06)),
             const SizedBox(height: 12),
             Wrap(
               spacing: 8,
@@ -458,8 +637,8 @@ class _SubjectCard extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: isDark
-                          ? Colors.white.withOpacity(0.08)
-                          : Colors.black.withOpacity(0.05),
+                          ? Colors.white.withValues(alpha: 0.08)
+                          : Colors.black.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Row(
@@ -533,7 +712,7 @@ class _Pill extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.12),
+        color: color.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(label,
@@ -768,7 +947,7 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         decoration: BoxDecoration(
-          color: isDark ? const Color(0xFF1A1E24) : Colors.white,
+          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
           borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: SingleChildScrollView(
@@ -1003,11 +1182,11 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: isDark
-              ? const Color(0xFFE53935).withOpacity(0.1)
-              : const Color(0xFFE53935).withOpacity(0.06),
+              ? const Color(0xFFE53935).withValues(alpha: 0.1)
+              : const Color(0xFFE53935).withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: const Color(0xFFE53935).withOpacity(0.25), width: 1),
+              color: const Color(0xFFE53935).withValues(alpha: 0.25), width: 1),
         ),
         child: Row(
           children: [
@@ -1044,13 +1223,13 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white.withOpacity(0.05)
-              : Colors.black.withOpacity(0.03),
+              ? Colors.white.withValues(alpha: 0.05)
+              : Colors.black.withValues(alpha: 0.03),
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
             color: isDark
-                ? Colors.white.withOpacity(0.1)
-                : Colors.black.withOpacity(0.08),
+                ? Colors.white.withValues(alpha: 0.1)
+                : Colors.black.withValues(alpha: 0.08),
           ),
         ),
         child: Row(
@@ -1089,8 +1268,8 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
             TextStyle(color: isDark ? Colors.white30 : Colors.black38),
         filled: true,
         fillColor: isDark
-            ? Colors.white.withOpacity(0.07)
-            : Colors.black.withOpacity(0.04),
+            ? Colors.white.withValues(alpha: 0.07)
+            : Colors.black.withValues(alpha: 0.04),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -1108,8 +1287,8 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
         color: isDark
-            ? Colors.white.withOpacity(0.05)
-            : Colors.black.withOpacity(0.03),
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.black.withValues(alpha: 0.03),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Row(
@@ -1134,8 +1313,8 @@ class _AddSubjectSheetState extends State<_AddSubjectSheet> {
               height: 30,
               decoration: BoxDecoration(
                 color: isDark
-                    ? Colors.white.withOpacity(0.1)
-                    : Colors.black.withOpacity(0.07),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : Colors.black.withValues(alpha: 0.07),
                 shape: BoxShape.circle,
               ),
               child: Icon(Icons.remove,

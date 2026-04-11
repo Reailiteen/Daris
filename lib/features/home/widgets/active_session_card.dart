@@ -12,7 +12,7 @@ class ActiveSessionCard extends GetView<HomeController> {
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFF0D47A1), Color(0xFF1565C0), Color(0xFF1E88E5)],
+            colors: [Color(0xFF3D3BB8), Color(0xFF5856D6), Color(0xFF7B79E0)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -29,7 +29,7 @@ class ActiveSessionCard extends GetView<HomeController> {
                 height: 160,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -41,7 +41,7 @@ class ActiveSessionCard extends GetView<HomeController> {
                 height: 100,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.white.withOpacity(0.05),
+                  color: Colors.white.withValues(alpha: 0.05),
                 ),
               ),
             ),
@@ -105,7 +105,8 @@ class ActiveSessionCard extends GetView<HomeController> {
                           label: 'End Session',
                           icon: Icons.stop_rounded,
                           onTap: controller.endSession,
-                          outlined: false,
+                          outlined: true,
+                          isEndButton: true,
                         ),
                       ),
                     ],
@@ -131,7 +132,7 @@ class ActiveSessionCard extends GetView<HomeController> {
             child: Obx(() => CircularProgressIndicator(
                   value: controller.progress.value,
                   strokeWidth: 10,
-                  backgroundColor: Colors.white.withOpacity(0.12),
+                  backgroundColor: Colors.white.withValues(alpha: 0.12),
                   valueColor:
                       const AlwaysStoppedAnimation<Color>(Colors.white),
                   strokeCap: StrokeCap.round,
@@ -160,9 +161,17 @@ class ActiveSessionCard extends GetView<HomeController> {
                 'remaining',
                 style: TextStyle(
                   color: Colors.white60,
-                  fontSize: 13,
+                  fontSize: 14,
                 ),
               ),
+              const SizedBox(height: 4),
+              Obx(() => Text(
+                    '${(controller.progress.value * 100).toInt()}% complete',
+                    style: const TextStyle(
+                      color: Colors.white60,
+                      fontSize: 12,
+                    ),
+                  )),
             ],
           ),
         ],
@@ -176,12 +185,14 @@ class _SessionButton extends StatelessWidget {
   final IconData icon;
   final VoidCallback onTap;
   final bool outlined;
+  final bool isEndButton;
 
   const _SessionButton({
     required this.label,
     required this.icon,
     required this.onTap,
     required this.outlined,
+    this.isEndButton = false,
   });
 
   @override
@@ -191,13 +202,14 @@ class _SessionButton extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 14),
         decoration: BoxDecoration(
-          color: outlined
-              ? Colors.white.withOpacity(0.15)
-              : Colors.white.withOpacity(0.25),
+          color: isEndButton
+              ? Colors.white.withValues(alpha: 0.20)
+              : Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(16),
-          border: outlined
-              ? Border.all(color: Colors.white.withOpacity(0.3), width: 1)
-              : null,
+          border: Border.all(
+            color: Colors.white.withValues(alpha: isEndButton ? 0.4 : 0.3),
+            width: 1,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,

@@ -61,12 +61,12 @@ class OnboardingWizardView extends GetView<AuthController> {
                       children: [
                         _StepIndicator(
                           currentStep: wizardStep,
-                          totalSteps: 3,
+                          totalSteps: 2,
                           isDark: isDark,
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Step ${wizardStep + 1} of 3',
+                          'Step ${wizardStep + 1} of 2',
                           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                                 color: isDark ? Colors.white38 : Colors.black38,
                               ),
@@ -102,7 +102,6 @@ class OnboardingWizardView extends GetView<AuthController> {
                             categoryLabels: _categoryLabels,
                             categoryIcons: _categoryIcons,
                           ),
-                        4 => _StepSubjects(isDark: isDark),
                         _ => const SizedBox.shrink(),
                       },
                     ),
@@ -157,13 +156,13 @@ class OnboardingWizardView extends GetView<AuthController> {
   }
 
   String _buttonLabel(int step) {
-    if (step == 4) return 'Start Studying';
+    if (step == 3) return 'Start Studying';
     if (step < 2) return 'Next';
     return 'Continue';
   }
 
   void _onContinue(int step) {
-    if (step == 4) {
+    if (step == 3) {
       controller.finishOnboarding();
     } else {
       controller.advanceStep();
@@ -246,7 +245,7 @@ class _Slide1Welcome extends StatelessWidget {
           const SizedBox(height: 32),
 
           Text(
-            'Welcome to Daris',
+            'Welcome to Merit',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,
@@ -453,7 +452,7 @@ class _StepPersonalInfo extends GetView<AuthController> {
                 initialValue: controller.firstName.value,
                 hint: 'e.g. Majed',
                 isDark: isDark,
-                autofocus: true,
+                autofocus: false,
                 onChanged: (v) => controller.firstName.value = v,
               )),
         ],

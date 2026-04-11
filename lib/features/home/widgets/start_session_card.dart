@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controller/home_controller.dart';
+import '../walkthrough_keys.dart';
 import '../../../data/models/focus_session.dart';
-import '../../app_selection/controller/app_selection_controller.dart';
 
 class StartSessionCard extends GetView<HomeController> {
   const StartSessionCard({super.key});
 
   void _showNameDialog() {
-    final textController = TextEditingController(text: controller.sessionName.value);
+    final textController =
+        TextEditingController(text: controller.sessionName.value);
     Get.dialog(
       AlertDialog(
         title: const Text('Session Name'),
@@ -55,129 +56,233 @@ class StartSessionCard extends GetView<HomeController> {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final selectionController = Get.find<AppSelectionController>();
 
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(24),
-      child: Container(
-        decoration: DarisDecorations.card(isDark),
-        child: Column(
-          children: [
-            // Gradient header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 24),
-              decoration: const BoxDecoration(
-                gradient: AppColors.primaryGradient,
-              ),
-              child: Column(
-                children: [
-                  const Icon(
-                    Icons.nights_stay_rounded,
-                    color: Colors.white,
-                    size: 36,
-                  ),
-                  const SizedBox(height: 8),
-                  Obx(() => Text(
-                        controller.sessionName.value,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 17,
-                          fontWeight: FontWeight.w600,
-                          letterSpacing: -0.3,
-                        ),
-                      )),
-                  const SizedBox(height: 4),
-                  Obx(() => Text(
-                        controller.selectedDuration.value.displayName,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 13,
-                        ),
-                      )),
-                ],
-              ),
-            ),
-
-            // Config rows
-            _ConfigRow(
-              icon: Icons.edit_outlined,
-              label: 'Name',
-              onTap: _showNameDialog,
-              trailing: Obx(() => _TrailingText(
-                    controller.sessionName.value,
-                    isDark: isDark,
-                  )),
-            ),
-            _RowDivider(),
-            _ConfigRow(
-              icon: Icons.timer_outlined,
-              label: 'Duration',
-              onTap: () => _showDurationPicker(context),
-              trailing: Obx(() => _TrailingText(
-                    controller.selectedDuration.value.displayName,
-                    isDark: isDark,
-                  )),
-            ),
-            _RowDivider(),
-            _ConfigRow(
-              icon: Icons.apps_rounded,
-              label: 'Block',
-              onTap: selectionController.openPicker,
-              trailing: Obx(() {
-                final count = selectionController.totalSelectedCount.value;
-                return Text(
-                  count > 0 ? '$count selected' : 'None selected',
-                  style: TextStyle(
-                    color: count > 0 ? AppColors.primary : Colors.orange,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                );
-              }),
-            ),
-            _RowDivider(),
-            _ConfigRow(
-              icon: Icons.shield_outlined,
-              label: 'Breaks',
-              onTap: () => _showDifficultyPicker(context),
-              trailing: Obx(() => _TrailingText(
-                    controller.selectedDifficulty.value.label,
-                    isDark: isDark,
-                  )),
-            ),
-
-            // Start button
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
-              child: SizedBox(
-                width: double.infinity,
-                height: 54,
-                child: DecoratedBox(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppColors.primaryGradient,
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.primary.withValues(alpha: 0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ── TOP: icon + label + session name ──────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 22, 24, 22),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: 50,
+                  height: 50,
                   decoration: BoxDecoration(
                     gradient: AppColors.primaryGradient,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: ElevatedButton(
-                    onPressed: controller.startSession,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.transparent,
-                      shadowColor: Colors.transparent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16)),
-                    ),
-                    child: const Text(
-                      'Start Blocking',
+                  child: const Icon(
+                    Icons.nights_stay_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Focus Session',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
+                        color: AppColors.textSecondaryDark,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    GestureDetector(
+                      onTap: _showNameDialog,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Obx(() => Text(
+                                controller.sessionName.value,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              )),
+                          const SizedBox(width: 6),
+                          const Icon(
+                            Icons.edit_rounded,
+                            color: AppColors.primary,
+                            size: 14,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+
+          Divider(
+              color: Colors.white.withValues(alpha: 0.15), height: 1, thickness: 1),
+
+          // ── MIDDLE: Duration + Difficulty pickers ─────────────────────────
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+            child: Row(
+              children: [
+                Expanded(
+                  child: _PickerTile(
+                    icon: Icons.timer_rounded,
+                    iconColor: AppColors.primary,
+                    label: 'Duration',
+                    valueWidget: Obx(() => Text(
+                          controller.selectedDuration.value.displayName,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
+                    onTap: () => _showDurationPicker(context),
+                    isDark: isDark,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: _PickerTile(
+                    icon: Icons.bolt_rounded,
+                    iconColor: AppColors.warning,
+                    label: 'Difficulty',
+                    valueWidget: Obx(() => Text(
+                          controller.selectedDifficulty.value.label,
+                          style: TextStyle(
+                            color: controller.selectedDifficulty.value.color,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )),
+                    onTap: () => _showDifficultyPicker(context),
+                    isDark: isDark,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // ── BOTTOM: Start button ──────────────────────────────────────────
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
+            child: SizedBox(
+              width: double.infinity,
+              height: 52,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withValues(alpha: 0.35),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Material(
+                  color: Colors.transparent,
+                  child: KeyedSubtree(
+                    key: WalkthroughKeys.blockRow,
+                    child: InkWell(
+                      onTap: controller.startSession,
+                      borderRadius: BorderRadius.circular(16),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.play_arrow_rounded,
+                              color: Colors.white, size: 22),
+                          SizedBox(width: 8),
+                          Text(
+                            'Start Session',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// _PickerTile
+// ---------------------------------------------------------------------------
+
+class _PickerTile extends StatelessWidget {
+  final IconData icon;
+  final Color iconColor;
+  final String label;
+  final Widget valueWidget;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _PickerTile({
+    required this.icon,
+    required this.iconColor,
+    required this.label,
+    required this.valueWidget,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.12),
+          borderRadius: BorderRadius.circular(DarisDecorations.cardRadius),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
+        ),
+        padding:
+            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: [
+                Icon(icon, color: Colors.white70, size: 16),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: const TextStyle(
+                    color: Colors.white60,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            valueWidget,
           ],
         ),
       ),
@@ -185,85 +290,7 @@ class StartSessionCard extends GetView<HomeController> {
   }
 }
 
-class _TrailingText extends StatelessWidget {
-  final String text;
-  final bool isDark;
-  const _TrailingText(this.text, {required this.isDark});
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: TextStyle(
-        color: isDark ? Colors.white54 : Colors.black45,
-        fontSize: 14,
-      ),
-    );
-  }
-}
-
-class _ConfigRow extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final Widget trailing;
-  final VoidCallback onTap;
-
-  const _ConfigRow({
-    required this.icon,
-    required this.label,
-    required this.trailing,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-          child: Row(
-            children: [
-              Icon(icon, size: 20, color: AppColors.primary),
-              const SizedBox(width: 14),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: isDark ? Colors.white : Colors.black87,
-                ),
-              ),
-              const Spacer(),
-              trailing,
-              const SizedBox(width: 6),
-              Icon(
-                Icons.chevron_right,
-                size: 18,
-                color: Colors.grey.withOpacity(0.5),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _RowDivider extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Divider(
-      height: 1,
-      indent: 54,
-      color: Colors.grey.withOpacity(0.15),
-    );
-  }
-}
-
-// ── Duration picker ───────────────────────────────────────────────────────────
+// ── Duration picker ─────────────────────────────────────────────────────────
 
 class _DurationPickerSheet extends StatelessWidget {
   final HomeController controller;
@@ -275,7 +302,7 @@ class _DurationPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
@@ -298,7 +325,7 @@ class _DurationPickerSheet extends StatelessWidget {
                           color: AppColors.primary)
                       : null,
                   tileColor: selected
-                      ? AppColors.primary.withOpacity(0.08)
+                      ? AppColors.primary.withValues(alpha: 0.08)
                       : null,
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12)),
@@ -314,7 +341,7 @@ class _DurationPickerSheet extends StatelessWidget {
   }
 }
 
-// ── Difficulty picker ─────────────────────────────────────────────────────────
+// ── Difficulty picker ────────────────────────────────────────────────────────
 
 class _DifficultyPickerSheet extends StatelessWidget {
   final HomeController controller;
@@ -326,7 +353,7 @@ class _DifficultyPickerSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1C1C1E) : Colors.white,
+        color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
         borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 40),
@@ -360,10 +387,10 @@ class _DifficultyPickerSheet extends StatelessWidget {
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
                         color: selected
-                            ? AppColors.primary.withOpacity(0.1)
+                            ? AppColors.primary.withValues(alpha: 0.1)
                             : isDark
-                                ? Colors.white.withOpacity(0.05)
-                                : Colors.grey.withOpacity(0.05),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : Colors.grey.withValues(alpha: 0.05),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
                           color: selected
@@ -420,7 +447,7 @@ class _SheetHandle extends StatelessWidget {
       width: 40,
       height: 4,
       decoration: BoxDecoration(
-        color: Colors.grey.withOpacity(0.3),
+        color: Colors.grey.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(2),
       ),
     );

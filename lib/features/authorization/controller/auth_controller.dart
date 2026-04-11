@@ -75,7 +75,7 @@ class AuthController extends GetxController {
     errorMessage.value = null;
     try {
       await _supabaseService.signUp(email: email, password: password);
-      Get.offAllNamed('/email-verification', arguments: {'email': email});
+      await _navigateAfterAuth();
     } on AuthException catch (e) {
       errorMessage.value = _authExceptionMessage(e);
     } catch (_) {
@@ -187,23 +187,8 @@ class AuthController extends GetxController {
             user.id, firstName.value.trim());
       }
 
-      for (final s in onboardingSubjects) {
-        try {
-          await _supabaseService.insertSubject(
-            userId: user.id,
-            name: s['name'] as String,
-            syllabusBook: s['syllabusBook'] as String?,
-            numQuizzes: (s['numQuizzes'] as int?) ?? 0,
-            numAssignments: (s['numAssignments'] as int?) ?? 0,
-            numMidterms: (s['numMidterms'] as int?) ?? 0,
-            numFinals: (s['numFinals'] as int?) ?? 0,
-            numProjects: (s['numProjects'] as int?) ?? 0,
-          );
-        } catch (_) {}
-      }
-
       await _supabaseService.completeOnboarding(user.id);
-      Get.offAllNamed('/onboarding');
+      Get.offAllNamed('/home', arguments: {'showTutorial': true});
     } catch (_) {
       errorMessage.value = 'Failed to save settings. Please try again.';
     } finally {
@@ -227,13 +212,6 @@ class AuthController extends GetxController {
   Future<void> _navigateAfterAuth() async {
     final user = _supabaseService.currentUser;
     if (user == null) return;
-
-    // A1: unverified email — redirect with email pre-filled for resend
-    if (user.emailConfirmedAt == null) {
-      Get.offAllNamed('/email-verification',
-          arguments: {'email': user.email ?? ''});
-      return;
-    }
 
     try {
       final profile = await _supabaseService.getProfile(user.id);

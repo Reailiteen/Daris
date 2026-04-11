@@ -80,9 +80,6 @@ Future<String> _resolveInitialRouteImpl() async {
 
   if (user == null) return '/landing';
 
-  // A1: email not yet verified
-  if (user.emailConfirmedAt == null) return '/email-verification';
-
   // Check onboarding completion
   bool onboardingDone = false;
   try {
@@ -136,11 +133,11 @@ class FocusFlowApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Daris',
+      title: 'Merit',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: ThemeMode.light,
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const _BootstrapPage()),

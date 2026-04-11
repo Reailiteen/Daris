@@ -92,7 +92,7 @@ class _VerticalDivider extends StatelessWidget {
     return Container(
       height: 40,
       width: 1,
-      color: Colors.grey.withOpacity(0.2),
+      color: Colors.grey.withValues(alpha: 0.2),
     );
   }
 }
