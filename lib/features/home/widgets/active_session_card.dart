@@ -64,14 +64,16 @@ class ActiveSessionCard extends GetView<HomeController> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      Obx(() => Text(
-                            controller.sessionName.value,
-                            style: const TextStyle(
-                              color: Colors.white70,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          )),
+                      Obx(
+                        () => Text(
+                          controller.sessionName.value,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 28),
@@ -129,14 +131,15 @@ class ActiveSessionCard extends GetView<HomeController> {
           SizedBox(
             width: 210,
             height: 210,
-            child: Obx(() => CircularProgressIndicator(
-                  value: controller.progress.value,
-                  strokeWidth: 10,
-                  backgroundColor: Colors.white.withValues(alpha: 0.12),
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(Colors.white),
-                  strokeCap: StrokeCap.round,
-                )),
+            child: Obx(
+              () => CircularProgressIndicator(
+                value: controller.progress.value,
+                strokeWidth: 10,
+                backgroundColor: Colors.white.withValues(alpha: 0.12),
+                valueColor: const AlwaysStoppedAnimation<Color>(Colors.white),
+                strokeCap: StrokeCap.round,
+              ),
+            ),
           ),
           // Inner content
           Column(
@@ -148,30 +151,28 @@ class ActiveSessionCard extends GetView<HomeController> {
                 size: 22,
               ),
               const SizedBox(height: 6),
-              Obx(() => Text(
-                    controller.remainingTimeString.value,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 52,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: -2,
-                    ),
-                  )),
-              const Text(
-                'remaining',
-                style: TextStyle(
-                  color: Colors.white60,
-                  fontSize: 14,
+              Obx(
+                () => Text(
+                  controller.remainingTimeString.value,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 52,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: -2,
+                  ),
                 ),
               ),
+              const Text(
+                'remaining',
+                style: TextStyle(color: Colors.white60, fontSize: 14),
+              ),
               const SizedBox(height: 4),
-              Obx(() => Text(
-                    '${(controller.progress.value * 100).toInt()}% complete',
-                    style: const TextStyle(
-                      color: Colors.white60,
-                      fontSize: 12,
-                    ),
-                  )),
+              Obx(
+                () => Text(
+                  '${(controller.progress.value * 100).toInt()}% complete',
+                  style: const TextStyle(color: Colors.white60, fontSize: 12),
+                ),
+              ),
             ],
           ),
         ],

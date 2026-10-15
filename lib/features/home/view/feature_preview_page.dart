@@ -160,7 +160,9 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      backgroundColor: isDark ? AppColors.backgroundDark : AppColors.backgroundLight,
+      backgroundColor: isDark
+          ? AppColors.backgroundDark
+          : AppColors.backgroundLight,
       body: Column(
         children: [
           _buildHeader(feature),
@@ -229,11 +231,7 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
                   color: Colors.white.withValues(alpha: 0.22),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(
-                  feature.icon,
-                  color: Colors.white,
-                  size: 40,
-                ),
+                child: Icon(feature.icon, color: Colors.white, size: 40),
               ),
               const SizedBox(height: 14),
               // Feature name
@@ -293,7 +291,9 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
                     offset: const Offset(0, 8),
                   ),
                   BoxShadow(
-                    color: feature.color.withValues(alpha: isActive ? 0.14 : 0.05),
+                    color: feature.color.withValues(
+                      alpha: isActive ? 0.14 : 0.05,
+                    ),
                     blurRadius: 16,
                     offset: const Offset(0, 4),
                   ),
@@ -316,11 +316,23 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
   Widget _buildSlide(FeatureInfo feature, int slideIndex, bool isDark) {
     switch (feature.index) {
       case 0:
-        return _LeaderboardSlide(slideIndex: slideIndex, color: feature.color, isDark: isDark);
+        return _LeaderboardSlide(
+          slideIndex: slideIndex,
+          color: feature.color,
+          isDark: isDark,
+        );
       case 1:
-        return _GroupStudiesSlide(slideIndex: slideIndex, color: feature.color, isDark: isDark);
+        return _GroupStudiesSlide(
+          slideIndex: slideIndex,
+          color: feature.color,
+          isDark: isDark,
+        );
       case 2:
-        return _AITutorSlide(slideIndex: slideIndex, color: feature.color, isDark: isDark);
+        return _AITutorSlide(
+          slideIndex: slideIndex,
+          color: feature.color,
+          isDark: isDark,
+        );
       case 3:
         return _StudyStreaksSlide(
           slideIndex: slideIndex,
@@ -329,7 +341,11 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
           pulseAnimation: _pulseAnimation,
         );
       case 4:
-        return _ChallengeModeSlide(slideIndex: slideIndex, color: feature.color, isDark: isDark);
+        return _ChallengeModeSlide(
+          slideIndex: slideIndex,
+          color: feature.color,
+          isDark: isDark,
+        );
       default:
         return const SizedBox.shrink();
     }
@@ -387,7 +403,9 @@ class _FeaturePreviewPageState extends State<FeaturePreviewPage>
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text("You'll be notified when ${feature.name} launches!"),
+                  content: Text(
+                    "You'll be notified when ${feature.name} launches!",
+                  ),
                   behavior: SnackBarBehavior.floating,
                 ),
               );
@@ -448,13 +466,32 @@ class _LeaderboardPodium extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     final podium = [
-      {'emoji': '🥇', 'name': 'Sara K.', 'hours': '48h', 'color': const Color(0xFFFFD700)},
-      {'emoji': '🥈', 'name': 'Ali M.', 'hours': '42h', 'color': const Color(0xFFC0C0C0)},
-      {'emoji': '🥉', 'name': 'Noor R.', 'hours': '38h', 'color': const Color(0xFFCD7F32)},
+      {
+        'emoji': '🥇',
+        'name': 'Sara K.',
+        'hours': '48h',
+        'color': const Color(0xFFFFD700),
+      },
+      {
+        'emoji': '🥈',
+        'name': 'Ali M.',
+        'hours': '42h',
+        'color': const Color(0xFFC0C0C0),
+      },
+      {
+        'emoji': '🥉',
+        'name': 'Noor R.',
+        'hours': '38h',
+        'color': const Color(0xFFCD7F32),
+      },
     ];
     final others = [
       {'rank': '4', 'name': 'Faisal H.', 'hours': '31h'},
@@ -468,8 +505,23 @@ class _LeaderboardPodium extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Leaderboard', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('This Month', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Leaderboard',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'This Month',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 18),
           // Podium
           Row(
@@ -482,30 +534,60 @@ class _LeaderboardPodium extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 20),
-          Divider(color: isDark ? AppColors.dividerDark : AppColors.divider, height: 1),
+          Divider(
+            color: isDark ? AppColors.dividerDark : AppColors.divider,
+            height: 1,
+          ),
           const SizedBox(height: 12),
-          ...others.map((o) => Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 26,
-                      height: 26,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: color.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(o['rank']!, style: TextStyle(fontFamily: 'Outfit', fontSize: 12, fontWeight: FontWeight.w600, color: color)),
+          ...others.map(
+            (o) => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 5),
+              child: Row(
+                children: [
+                  Container(
+                    width: 26,
+                    height: 26,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 10),
-                    _MockAvatar(name: o['name']!, size: 28, color: color),
-                    const SizedBox(width: 8),
-                    Expanded(child: Text(o['name']!, style: TextStyle(fontFamily: 'Outfit', fontSize: 13, color: textPrimary))),
-                    Text(o['hours']!, style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: color)),
-                  ],
-                ),
-              )),
+                    child: Text(
+                      o['rank']!,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  _MockAvatar(name: o['name']!, size: 28, color: color),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      o['name']!,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13,
+                        color: textPrimary,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    o['hours']!,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -513,14 +595,20 @@ class _LeaderboardPodium extends StatelessWidget {
 }
 
 class _PodiumEntry extends StatelessWidget {
-  const _PodiumEntry({required this.data, required this.height, required this.isDark});
+  const _PodiumEntry({
+    required this.data,
+    required this.height,
+    required this.isDark,
+  });
   final Map<String, Object> data;
   final double height;
   final bool isDark;
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
     final podiumColor = data['color'] as Color;
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -529,9 +617,24 @@ class _PodiumEntry extends StatelessWidget {
         const SizedBox(height: 4),
         _MockAvatar(name: data['name'] as String, size: 36, color: podiumColor),
         const SizedBox(height: 4),
-        Text(data['name'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 11, fontWeight: FontWeight.w600, color: textPrimary)),
+        Text(
+          data['name'] as String,
+          style: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: textPrimary,
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(data['hours'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: podiumColor)),
+        Text(
+          data['hours'] as String,
+          style: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 10,
+            color: podiumColor,
+          ),
+        ),
         const SizedBox(height: 6),
         Container(
           width: 56,
@@ -539,7 +642,10 @@ class _PodiumEntry extends StatelessWidget {
           decoration: BoxDecoration(
             color: podiumColor.withValues(alpha: 0.15),
             borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            border: Border.all(color: podiumColor.withValues(alpha: 0.4), width: 1.5),
+            border: Border.all(
+              color: podiumColor.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
           ),
         ),
       ],
@@ -555,8 +661,12 @@ class _LeaderboardBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
     final days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
     final heights = [0.55, 0.72, 0.48, 1.0, 0.63];
     const myIndex = 3; // Thursday is highlighted
@@ -567,8 +677,23 @@ class _LeaderboardBarChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('This Week', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('Study hours per day', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'This Week',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'Study hours per day',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 24),
           SizedBox(
             height: 160,
@@ -583,12 +708,23 @@ class _LeaderboardBarChart extends StatelessWidget {
                   children: [
                     if (isMe)
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: color,
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        child: const Text('You', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: Colors.white, fontWeight: FontWeight.w600)),
+                        child: const Text(
+                          'You',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 10,
+                            color: Colors.white,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                       ),
                     if (isMe) const SizedBox(height: 4),
                     Container(
@@ -596,11 +732,21 @@ class _LeaderboardBarChart extends StatelessWidget {
                       height: barH,
                       decoration: BoxDecoration(
                         color: isMe ? color : color.withValues(alpha: 0.28),
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(8),
+                        ),
                       ),
                     ),
                     const SizedBox(height: 6),
-                    Text(days[i], style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: isMe ? color : textSecondary, fontWeight: isMe ? FontWeight.w700 : FontWeight.w400)),
+                    Text(
+                      days[i],
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        color: isMe ? color : textSecondary,
+                        fontWeight: isMe ? FontWeight.w700 : FontWeight.w400,
+                      ),
+                    ),
                   ],
                 );
               }),
@@ -617,7 +763,15 @@ class _LeaderboardBarChart extends StatelessWidget {
               children: [
                 Icon(Icons.trending_up_rounded, color: color, size: 16),
                 const SizedBox(width: 8),
-                Text('Your best day: Thursday (6.2h)', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: color, fontWeight: FontWeight.w500)),
+                Text(
+                  'Your best day: Thursday (6.2h)',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 12,
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ],
             ),
           ),
@@ -635,8 +789,12 @@ class _LeaderboardYourRank extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Container(
       color: bg,
@@ -644,7 +802,14 @@ class _LeaderboardYourRank extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 8),
-          Text('Your Rank', style: TextStyle(fontFamily: 'Outfit', fontSize: 15, color: textSecondary)),
+          Text(
+            'Your Rank',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 15,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 16),
           SizedBox(
             width: 140,
@@ -664,8 +829,23 @@ class _LeaderboardYourRank extends StatelessWidget {
                 Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text('#12', style: TextStyle(fontFamily: 'Outfit', fontSize: 36, fontWeight: FontWeight.w800, color: textPrimary)),
-                    Text('out of 248', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                    Text(
+                      '#12',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 36,
+                        fontWeight: FontWeight.w800,
+                        color: textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'out of 248',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        color: textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -676,19 +856,40 @@ class _LeaderboardYourRank extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [color.withValues(alpha: 0.9), color.withValues(alpha: 0.7)],
+                colors: [
+                  color.withValues(alpha: 0.9),
+                  color.withValues(alpha: 0.7),
+                ],
               ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text('Top 5%  🏆', style: TextStyle(fontFamily: 'Outfit', fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white)),
+            child: const Text(
+              'Top 5%  🏆',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _StatPill(label: 'Study hrs', value: '42h', color: color, isDark: isDark),
+              _StatPill(
+                label: 'Study hrs',
+                value: '42h',
+                color: color,
+                isDark: isDark,
+              ),
               const SizedBox(width: 12),
-              _StatPill(label: 'Sessions', value: '28', color: color, isDark: isDark),
+              _StatPill(
+                label: 'Sessions',
+                value: '28',
+                color: color,
+                isDark: isDark,
+              ),
             ],
           ),
         ],
@@ -701,7 +902,11 @@ class _LeaderboardYourRank extends StatelessWidget {
 // GROUP STUDIES SLIDES
 // ===========================================================================
 class _GroupStudiesSlide extends StatelessWidget {
-  const _GroupStudiesSlide({required this.slideIndex, required this.color, required this.isDark});
+  const _GroupStudiesSlide({
+    required this.slideIndex,
+    required this.color,
+    required this.isDark,
+  });
   final int slideIndex;
   final Color color;
   final bool isDark;
@@ -724,15 +929,41 @@ class _GroupRoomList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final cardBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final cardBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
 
     final rooms = [
-      {'name': 'CS 201 Finals 🔥', 'members': 3, 'max': 5, 'topic': 'Data Structures'},
-      {'name': 'Math Analysis 📐', 'members': 2, 'max': 4, 'topic': 'Calculus II'},
-      {'name': 'Physics Lab Prep ⚗️', 'members': 4, 'max': 6, 'topic': 'Electromagnetism'},
-      {'name': 'English Writing ✍️', 'members': 1, 'max': 3, 'topic': 'Essay review'},
+      {
+        'name': 'CS 201 Finals 🔥',
+        'members': 3,
+        'max': 5,
+        'topic': 'Data Structures',
+      },
+      {
+        'name': 'Math Analysis 📐',
+        'members': 2,
+        'max': 4,
+        'topic': 'Calculus II',
+      },
+      {
+        'name': 'Physics Lab Prep ⚗️',
+        'members': 4,
+        'max': 6,
+        'topic': 'Electromagnetism',
+      },
+      {
+        'name': 'English Writing ✍️',
+        'members': 1,
+        'max': 3,
+        'topic': 'Essay review',
+      },
     ];
 
     return Container(
@@ -741,8 +972,23 @@ class _GroupRoomList extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Study Rooms', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('Join a room and study together', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Study Rooms',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'Join a room and study together',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 14),
           ...rooms.map((r) {
             final members = r['members'] as int;
@@ -753,7 +999,10 @@ class _GroupRoomList extends StatelessWidget {
               decoration: BoxDecoration(
                 color: cardBg,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: color.withValues(alpha: 0.15), width: 1),
+                border: Border.all(
+                  color: color.withValues(alpha: 0.15),
+                  width: 1,
+                ),
               ),
               child: Row(
                 children: [
@@ -761,24 +1010,51 @@ class _GroupRoomList extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(r['name'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary)),
-                        Text(r['topic'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                        Text(
+                          r['name'] as String,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: textPrimary,
+                          ),
+                        ),
+                        Text(
+                          r['topic'] as String,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 11,
+                            color: textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   Row(
-                    children: List.generate(max, (i) => Container(
-                      width: 8,
-                      height: 8,
-                      margin: const EdgeInsets.symmetric(horizontal: 1.5),
-                      decoration: BoxDecoration(
-                        color: i < members ? AppColors.success : color.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
+                    children: List.generate(
+                      max,
+                      (i) => Container(
+                        width: 8,
+                        height: 8,
+                        margin: const EdgeInsets.symmetric(horizontal: 1.5),
+                        decoration: BoxDecoration(
+                          color: i < members
+                              ? AppColors.success
+                              : color.withValues(alpha: 0.2),
+                          shape: BoxShape.circle,
+                        ),
                       ),
-                    )),
+                    ),
                   ),
                   const SizedBox(width: 6),
-                  Text('$members/$max', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                  Text(
+                    '$members/$max',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 11,
+                      color: textSecondary,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -797,11 +1073,20 @@ class _GroupActiveRoom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     final avatars = ['Sara', 'Ali', 'Noor', 'Faisal'];
-    final colors = [const Color(0xFFFFB300), const Color(0xFF1E88E5), const Color(0xFF8E24AA), const Color(0xFF00897B)];
+    final colors = [
+      const Color(0xFFFFB300),
+      const Color(0xFF1E88E5),
+      const Color(0xFF8E24AA),
+      const Color(0xFF00897B),
+    ];
     final positions = [
       const Offset(-90, -60),
       const Offset(90, -60),
@@ -817,16 +1102,42 @@ class _GroupActiveRoom extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('CS 201 Finals', style: TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.w700, color: textPrimary)),
+              Text(
+                'CS 201 Finals',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: textPrimary,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
-                child: const Text('LIVE', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.success)),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                ),
+                child: const Text(
+                  'LIVE',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.success,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 6),
-          Text('Pomodoro session in progress', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+          Text(
+            'Pomodoro session in progress',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 11,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 20),
           SizedBox(
             height: 220,
@@ -850,25 +1161,54 @@ class _GroupActiveRoom extends StatelessWidget {
                       Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('35', style: TextStyle(fontFamily: 'Outfit', fontSize: 26, fontWeight: FontWeight.w800, color: textPrimary)),
-                          Text('min left', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
+                          Text(
+                            '35',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 26,
+                              fontWeight: FontWeight.w800,
+                              color: textPrimary,
+                            ),
+                          ),
+                          Text(
+                            'min left',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 10,
+                              color: textSecondary,
+                            ),
+                          ),
                         ],
                       ),
                     ],
                   ),
                 ),
                 // Avatars around the circle
-                ...List.generate(4, (i) => Transform.translate(
-                  offset: positions[i],
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      _MockAvatar(name: avatars[i], size: 34, color: colors[i]),
-                      const SizedBox(height: 2),
-                      Text(avatars[i], style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
-                    ],
+                ...List.generate(
+                  4,
+                  (i) => Transform.translate(
+                    offset: positions[i],
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        _MockAvatar(
+                          name: avatars[i],
+                          size: 34,
+                          color: colors[i],
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          avatars[i],
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 10,
+                            color: textSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                )),
+                ),
               ],
             ),
           ),
@@ -886,9 +1226,15 @@ class _GroupScoreboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final cardBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final cardBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
 
     final rows = [
       {'name': 'Sara K.', 'tasks': '8', 'xp': '+240'},
@@ -909,8 +1255,23 @@ class _GroupScoreboard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Room Scoreboard', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('CS 201 Finals • Session 2', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Room Scoreboard',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'CS 201 Finals • Session 2',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 14),
           ...List.generate(rows.length, (i) {
             final isMe = rows[i]['name'] == 'You';
@@ -920,21 +1281,69 @@ class _GroupScoreboard extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isMe ? color.withValues(alpha: 0.12) : cardBg,
                 borderRadius: BorderRadius.circular(12),
-                border: isMe ? Border.all(color: color.withValues(alpha: 0.35), width: 1.5) : null,
+                border: isMe
+                    ? Border.all(
+                        color: color.withValues(alpha: 0.35),
+                        width: 1.5,
+                      )
+                    : null,
               ),
               child: Row(
                 children: [
-                  Text('${i + 1}', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: rowColors[i])),
+                  Text(
+                    '${i + 1}',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: rowColors[i],
+                    ),
+                  ),
                   const SizedBox(width: 10),
-                  _MockAvatar(name: rows[i]['name']!, size: 30, color: rowColors[i]),
+                  _MockAvatar(
+                    name: rows[i]['name']!,
+                    size: 30,
+                    color: rowColors[i],
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: Text(rows[i]['name']!, style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: isMe ? FontWeight.w700 : FontWeight.w500, color: textPrimary))),
-                  Text('${rows[i]['tasks']} tasks', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                  Expanded(
+                    child: Text(
+                      rows[i]['name']!,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13,
+                        fontWeight: isMe ? FontWeight.w700 : FontWeight.w500,
+                        color: textPrimary,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${rows[i]['tasks']} tasks',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 11,
+                      color: textSecondary,
+                    ),
+                  ),
                   const SizedBox(width: 8),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
-                    decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
-                    child: Text(rows[i]['xp']!, style: TextStyle(fontFamily: 'Outfit', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.success)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 7,
+                      vertical: 3,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.success.withValues(alpha: 0.15),
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      rows[i]['xp']!,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.success,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -950,7 +1359,11 @@ class _GroupScoreboard extends StatelessWidget {
 // AI TUTOR SLIDES
 // ===========================================================================
 class _AITutorSlide extends StatelessWidget {
-  const _AITutorSlide({required this.slideIndex, required this.color, required this.isDark});
+  const _AITutorSlide({
+    required this.slideIndex,
+    required this.color,
+    required this.isDark,
+  });
   final int slideIndex;
   final Color color;
   final bool isDark;
@@ -973,8 +1386,12 @@ class _AIChatSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
     final aiBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
 
     return Container(
@@ -986,32 +1403,71 @@ class _AIChatSlide extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 32, height: 32,
-                decoration: BoxDecoration(color: color.withValues(alpha: 0.15), shape: BoxShape.circle),
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  shape: BoxShape.circle,
+                ),
                 child: Icon(Icons.psychology_rounded, color: color, size: 18),
               ),
               const SizedBox(width: 8),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('AI Tutor', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
-                  Text('Always ready to help', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
+                  Text(
+                    'AI Tutor',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Always ready to help',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 10,
+                      color: textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ],
           ),
           const SizedBox(height: 14),
           // User message 1
-          _ChatBubble(text: "Can you explain Big O notation?", isUser: true, color: color),
+          _ChatBubble(
+            text: "Can you explain Big O notation?",
+            isUser: true,
+            color: color,
+          ),
           const SizedBox(height: 8),
           // AI response 1
-          _ChatBubble(text: "Big O notation describes how algorithm complexity grows. O(n) means linear time — if you double input, time doubles.", isUser: false, bgColor: aiBg, textColor: textPrimary),
+          _ChatBubble(
+            text:
+                "Big O notation describes how algorithm complexity grows. O(n) means linear time — if you double input, time doubles.",
+            isUser: false,
+            bgColor: aiBg,
+            textColor: textPrimary,
+          ),
           const SizedBox(height: 8),
           // User message 2
-          _ChatBubble(text: "What's the difference between O(n) and O(n²)?", isUser: true, color: color),
+          _ChatBubble(
+            text: "What's the difference between O(n) and O(n²)?",
+            isUser: true,
+            color: color,
+          ),
           const SizedBox(height: 8),
           // AI response 2
-          _ChatBubble(text: "O(n²) grows quadratically — a nested loop over n items is O(n²). O(n) is much faster at scale! 🚀", isUser: false, bgColor: aiBg, textColor: textPrimary),
+          _ChatBubble(
+            text:
+                "O(n²) grows quadratically — a nested loop over n items is O(n²). O(n) is much faster at scale! 🚀",
+            isUser: false,
+            bgColor: aiBg,
+            textColor: textPrimary,
+          ),
         ],
       ),
     );
@@ -1019,7 +1475,13 @@ class _AIChatSlide extends StatelessWidget {
 }
 
 class _ChatBubble extends StatelessWidget {
-  const _ChatBubble({required this.text, required this.isUser, this.color, this.bgColor, this.textColor});
+  const _ChatBubble({
+    required this.text,
+    required this.isUser,
+    this.color,
+    this.bgColor,
+    this.textColor,
+  });
   final String text;
   final bool isUser;
   final Color? color;
@@ -1064,9 +1526,15 @@ class _AIGenerateQuizSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final cardBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final cardBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
 
     return Container(
       color: bg,
@@ -1074,29 +1542,70 @@ class _AIGenerateQuizSlide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Generate Quiz', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('From your study notes', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Generate Quiz',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'From your study notes',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 20),
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: cardBg,
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: color.withValues(alpha: 0.2), width: 1.5),
+              border: Border.all(
+                color: color.withValues(alpha: 0.2),
+                width: 1.5,
+              ),
             ),
             child: Row(
               children: [
                 Container(
-                  width: 44, height: 44,
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(12)),
-                  child: Icon(Icons.description_outlined, color: color, size: 22),
+                  width: 44,
+                  height: 44,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    Icons.description_outlined,
+                    color: color,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Calculus_Notes.pdf', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: textPrimary)),
-                    Text('From your notes • 14 pages', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                    Text(
+                      'Calculus_Notes.pdf',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: textPrimary,
+                      ),
+                    ),
+                    Text(
+                      'From your notes • 14 pages',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        color: textSecondary,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -1105,21 +1614,51 @@ class _AIGenerateQuizSlide extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              _QuizOptionChip(label: '10 Qs', selected: true, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: '10 Qs',
+                selected: true,
+                color: color,
+                isDark: isDark,
+              ),
               const SizedBox(width: 8),
-              _QuizOptionChip(label: '20 Qs', selected: false, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: '20 Qs',
+                selected: false,
+                color: color,
+                isDark: isDark,
+              ),
               const SizedBox(width: 8),
-              _QuizOptionChip(label: '30 Qs', selected: false, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: '30 Qs',
+                selected: false,
+                color: color,
+                isDark: isDark,
+              ),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              _QuizOptionChip(label: 'Easy', selected: false, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: 'Easy',
+                selected: false,
+                color: color,
+                isDark: isDark,
+              ),
               const SizedBox(width: 8),
-              _QuizOptionChip(label: 'Medium', selected: true, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: 'Medium',
+                selected: true,
+                color: color,
+                isDark: isDark,
+              ),
               const SizedBox(width: 8),
-              _QuizOptionChip(label: 'Hard', selected: false, color: color, isDark: isDark),
+              _QuizOptionChip(
+                label: 'Hard',
+                selected: false,
+                color: color,
+                isDark: isDark,
+              ),
             ],
           ),
           const SizedBox(height: 20),
@@ -1130,7 +1669,16 @@ class _AIGenerateQuizSlide extends StatelessWidget {
               color: color,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Text('Generate 10 Questions', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center),
+            child: const Text(
+              'Generate 10 Questions',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -1139,7 +1687,12 @@ class _AIGenerateQuizSlide extends StatelessWidget {
 }
 
 class _QuizOptionChip extends StatelessWidget {
-  const _QuizOptionChip({required this.label, required this.selected, required this.color, required this.isDark});
+  const _QuizOptionChip({
+    required this.label,
+    required this.selected,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
   final bool selected;
   final Color color;
@@ -1147,13 +1700,18 @@ class _QuizOptionChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final chipBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final chipBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
       decoration: BoxDecoration(
         color: selected ? color.withValues(alpha: 0.15) : chipBg,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: selected ? color.withValues(alpha: 0.5) : Colors.transparent, width: 1.5),
+        border: Border.all(
+          color: selected ? color.withValues(alpha: 0.5) : Colors.transparent,
+          width: 1.5,
+        ),
       ),
       child: Text(
         label,
@@ -1161,7 +1719,11 @@ class _QuizOptionChip extends StatelessWidget {
           fontFamily: 'Outfit',
           fontSize: 12,
           fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-          color: selected ? color : (isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight),
+          color: selected
+              ? color
+              : (isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondaryLight),
         ),
       ),
     );
@@ -1176,9 +1738,15 @@ class _AIConceptCardSlide extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final cardBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final cardBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
 
     return Container(
       color: bg,
@@ -1186,8 +1754,23 @@ class _AIConceptCardSlide extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Concept Card', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('AI-generated explanation', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Concept Card',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'AI-generated explanation',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 16),
           Container(
             width: double.infinity,
@@ -1200,22 +1783,57 @@ class _AIConceptCardSlide extends StatelessWidget {
             child: Column(
               children: [
                 Container(
-                  width: 56, height: 56,
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.12), shape: BoxShape.circle),
-                  child: Icon(Icons.lightbulb_outline_rounded, color: color, size: 28),
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.lightbulb_outline_rounded,
+                    color: color,
+                    size: 28,
+                  ),
                 ),
                 const SizedBox(height: 12),
-                Text('Integration by Parts', style: TextStyle(fontFamily: 'Outfit', fontSize: 15, fontWeight: FontWeight.w700, color: textPrimary)),
+                Text(
+                  'Integration by Parts',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 15,
+                    fontWeight: FontWeight.w700,
+                    color: textPrimary,
+                  ),
+                ),
                 Container(
                   margin: const EdgeInsets.symmetric(vertical: 6),
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                  decoration: BoxDecoration(color: color.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
-                  child: Text('Calculus II', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, fontWeight: FontWeight.w600, color: color)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.12),
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(
+                    'Calculus II',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 6),
                 Text(
                   'A technique to integrate products of functions. Uses the formula: ∫u dv = uv − ∫v du, where you choose u to simplify on differentiation.',
-                  style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary, height: 1.5),
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 12,
+                    color: textSecondary,
+                    height: 1.5,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -1228,18 +1846,42 @@ class _AIConceptCardSlide extends StatelessWidget {
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
                   decoration: BoxDecoration(
-                    border: Border.all(color: color.withValues(alpha: 0.5), width: 1.5),
+                    border: Border.all(
+                      color: color.withValues(alpha: 0.5),
+                      width: 1.5,
+                    ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Text('Got it ✓', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: color), textAlign: TextAlign.center),
+                  child: Text(
+                    'Got it ✓',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: color,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Container(
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
-                  child: const Text('Show more', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: Colors.white), textAlign: TextAlign.center),
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Text(
+                    'Show more',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
             ],
@@ -1269,7 +1911,11 @@ class _StudyStreaksSlide extends StatelessWidget {
   Widget build(BuildContext context) {
     return switch (slideIndex) {
       0 => _StreaksHeatmap(color: color, isDark: isDark),
-      1 => _StreaksCounter(color: color, isDark: isDark, pulseAnimation: pulseAnimation),
+      1 => _StreaksCounter(
+        color: color,
+        isDark: isDark,
+        pulseAnimation: pulseAnimation,
+      ),
       _ => _StreaksGoalRings(color: color, isDark: isDark),
     };
   }
@@ -1283,9 +1929,15 @@ class _StreaksHeatmap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
-    final emptyColor = isDark ? AppColors.surfaceElevated : const Color(0xFFEEEEEE);
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
+    final emptyColor = isDark
+        ? AppColors.surfaceElevated
+        : const Color(0xFFEEEEEE);
 
     // 5 weeks × 7 days, 1 = studied, 0 = not, -1 = future
     final grid = [
@@ -1303,52 +1955,109 @@ class _StreaksHeatmap extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Study Heatmap', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('Last 5 weeks', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Study Heatmap',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'Last 5 weeks',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 14),
           // Day labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: days.map((d) => SizedBox(
-              width: 30,
-              child: Text(d, style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary), textAlign: TextAlign.center),
-            )).toList(),
+            children: days
+                .map(
+                  (d) => SizedBox(
+                    width: 30,
+                    child: Text(
+                      d,
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        color: textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+                .toList(),
           ),
           const SizedBox(height: 6),
-          ...grid.map((week) => Padding(
-            padding: const EdgeInsets.only(bottom: 5),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: week.map((val) {
-                Color cellColor;
-                if (val == -1) {
-                  cellColor = emptyColor.withValues(alpha: 0.4);
-                } else if (val == 0) {
-                  cellColor = emptyColor;
-                } else {
-                  cellColor = color.withValues(alpha: 0.85);
-                }
-                return Container(
-                  width: 28,
-                  height: 28,
-                  decoration: BoxDecoration(
-                    color: cellColor,
-                    borderRadius: BorderRadius.circular(6),
-                  ),
-                );
-              }).toList(),
+          ...grid.map(
+            (week) => Padding(
+              padding: const EdgeInsets.only(bottom: 5),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: week.map((val) {
+                  Color cellColor;
+                  if (val == -1) {
+                    cellColor = emptyColor.withValues(alpha: 0.4);
+                  } else if (val == 0) {
+                    cellColor = emptyColor;
+                  } else {
+                    cellColor = color.withValues(alpha: 0.85);
+                  }
+                  return Container(
+                    width: 28,
+                    height: 28,
+                    decoration: BoxDecoration(
+                      color: cellColor,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                  );
+                }).toList(),
+              ),
             ),
-          )),
+          ),
           const SizedBox(height: 12),
           Row(
             children: [
-              Container(width: 10, height: 10, decoration: BoxDecoration(color: emptyColor, borderRadius: BorderRadius.circular(3))),
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: emptyColor,
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
               const SizedBox(width: 5),
-              Text('No study', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+              Text(
+                'No study',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 11,
+                  color: textSecondary,
+                ),
+              ),
               const SizedBox(width: 14),
-              Container(width: 10, height: 10, decoration: BoxDecoration(color: color.withValues(alpha: 0.85), borderRadius: BorderRadius.circular(3))),
+              Container(
+                width: 10,
+                height: 10,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(3),
+                ),
+              ),
               const SizedBox(width: 5),
-              Text('Studied', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+              Text(
+                'Studied',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 11,
+                  color: textSecondary,
+                ),
+              ),
             ],
           ),
         ],
@@ -1358,7 +2067,11 @@ class _StreaksHeatmap extends StatelessWidget {
 }
 
 class _StreaksCounter extends StatelessWidget {
-  const _StreaksCounter({required this.color, required this.isDark, required this.pulseAnimation});
+  const _StreaksCounter({
+    required this.color,
+    required this.isDark,
+    required this.pulseAnimation,
+  });
   final Color color;
   final bool isDark;
   final Animation<double> pulseAnimation;
@@ -1366,8 +2079,12 @@ class _StreaksCounter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Container(
       color: bg,
@@ -1386,14 +2103,38 @@ class _StreaksCounter extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text('🔥', style: TextStyle(fontSize: 32)),
-                Text('42', style: TextStyle(fontFamily: 'Outfit', fontSize: 28, fontWeight: FontWeight.w800, color: color, height: 1)),
+                Text(
+                  '42',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                    height: 1,
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 10),
-          Text('days in a row', style: TextStyle(fontFamily: 'Outfit', fontSize: 14, color: textSecondary)),
+          Text(
+            'days in a row',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 14,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 6),
-          Text('Personal best: 56 days', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, fontWeight: FontWeight.w500, color: textPrimary)),
+          Text(
+            'Personal best: 56 days',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              fontWeight: FontWeight.w500,
+              color: textPrimary,
+            ),
+          ),
           const SizedBox(height: 22),
           // 7 day indicators
           Row(
@@ -1413,7 +2154,17 @@ class _StreaksCounter extends StatelessWidget {
                       shape: BoxShape.circle,
                       border: Border.all(color: color, width: 2),
                     ),
-                    child: const Center(child: Text('T', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white))),
+                    child: const Center(
+                      child: Text(
+                        'T',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                 );
               }
@@ -1428,7 +2179,12 @@ class _StreaksCounter extends StatelessWidget {
                 child: Center(
                   child: Text(
                     ['M', 'T', 'W', 'T', 'F', 'S'][i],
-                    style: TextStyle(fontFamily: 'Outfit', fontSize: 10, fontWeight: FontWeight.w700, color: isFilled ? Colors.white : color),
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: isFilled ? Colors.white : color,
+                    ),
                   ),
                 ),
               );
@@ -1437,8 +2193,19 @@ class _StreaksCounter extends StatelessWidget {
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(8)),
-            child: const Text('Keep it up! 1 more day for a new record 🚀', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: AppColors.success), textAlign: TextAlign.center),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Text(
+              'Keep it up! 1 more day for a new record 🚀',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 11,
+                color: AppColors.success,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -1454,13 +2221,27 @@ class _StreaksGoalRings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     final goals = [
       {'label': 'Study Time', 'pct': 0.80, 'value': '80%', 'color': color},
-      {'label': 'Tasks', 'pct': 0.60, 'value': '60%', 'color': const Color(0xFF1E88E5)},
-      {'label': 'Quizzes', 'pct': 1.0, 'value': '100%', 'color': AppColors.success},
+      {
+        'label': 'Tasks',
+        'pct': 0.60,
+        'value': '60%',
+        'color': const Color(0xFF1E88E5),
+      },
+      {
+        'label': 'Quizzes',
+        'pct': 1.0,
+        'value': '100%',
+        'color': AppColors.success,
+      },
     ];
 
     return Container(
@@ -1469,8 +2250,23 @@ class _StreaksGoalRings extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Weekly Goals', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('April 7 – 13, 2026', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Weekly Goals',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            'April 7 – 13, 2026',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 24),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -1489,16 +2285,33 @@ class _StreaksGoalRings extends StatelessWidget {
                             value: g['pct'] as double,
                             strokeWidth: 7,
                             backgroundColor: ringColor.withValues(alpha: 0.15),
-                            valueColor: AlwaysStoppedAnimation<Color>(ringColor),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              ringColor,
+                            ),
                             strokeCap: StrokeCap.round,
                           ),
                         ),
-                        Text(g['value'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
+                        Text(
+                          g['value'] as String,
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                            color: textPrimary,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   const SizedBox(height: 8),
-                  Text(g['label'] as String, style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+                  Text(
+                    g['label'] as String,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 11,
+                      color: textSecondary,
+                    ),
+                  ),
                 ],
               );
             }).toList(),
@@ -1508,7 +2321,9 @@ class _StreaksGoalRings extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(14),
             decoration: BoxDecoration(
-              color: isDark ? AppColors.surfaceElevated : AppColors.backgroundLight,
+              color: isDark
+                  ? AppColors.surfaceElevated
+                  : AppColors.backgroundLight,
               borderRadius: BorderRadius.circular(12),
             ),
             child: Column(
@@ -1516,8 +2331,23 @@ class _StreaksGoalRings extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Overall completion', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
-                    Text('80%', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
+                    Text(
+                      'Overall completion',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 12,
+                        color: textSecondary,
+                      ),
+                    ),
+                    Text(
+                      '80%',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: textPrimary,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -1543,7 +2373,11 @@ class _StreaksGoalRings extends StatelessWidget {
 // CHALLENGE MODE SLIDES
 // ===========================================================================
 class _ChallengeModeSlide extends StatelessWidget {
-  const _ChallengeModeSlide({required this.slideIndex, required this.color, required this.isDark});
+  const _ChallengeModeSlide({
+    required this.slideIndex,
+    required this.color,
+    required this.isDark,
+  });
   final int slideIndex;
   final Color color;
   final bool isDark;
@@ -1566,8 +2400,12 @@ class _ChallengeMatchmaking extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Container(
       color: bg,
@@ -1575,8 +2413,23 @@ class _ChallengeMatchmaking extends StatelessWidget {
       child: Column(
         children: [
           const SizedBox(height: 10),
-          Text('Challenge Mode', style: TextStyle(fontFamily: 'Outfit', fontSize: 17, fontWeight: FontWeight.w700, color: textPrimary)),
-          Text('1v1 Quiz Battle', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary)),
+          Text(
+            'Challenge Mode',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
+              color: textPrimary,
+            ),
+          ),
+          Text(
+            '1v1 Quiz Battle',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+          ),
           const SizedBox(height: 28),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -1585,8 +2438,23 @@ class _ChallengeMatchmaking extends StatelessWidget {
                 children: [
                   _MockAvatar(name: 'You', size: 56, color: color),
                   const SizedBox(height: 6),
-                  Text('You', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
-                  Text('Rank #12', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
+                  Text(
+                    'You',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Rank #12',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 10,
+                      color: textSecondary,
+                    ),
+                  ),
                 ],
               ),
               Padding(
@@ -1594,12 +2462,23 @@ class _ChallengeMatchmaking extends StatelessWidget {
                 child: Column(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: color.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Text('VS', style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.w900, color: color)),
+                      child: Text(
+                        'VS',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                          color: color,
+                        ),
+                      ),
                     ),
                   ],
                 ),
@@ -1607,16 +2486,36 @@ class _ChallengeMatchmaking extends StatelessWidget {
               Column(
                 children: [
                   Container(
-                    width: 56, height: 56,
+                    width: 56,
+                    height: 56,
                     decoration: BoxDecoration(
                       color: AppColors.textSecondaryDark.withValues(alpha: 0.2),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(Icons.person_outline_rounded, color: textSecondary, size: 28),
+                    child: Icon(
+                      Icons.person_outline_rounded,
+                      color: textSecondary,
+                      size: 28,
+                    ),
                   ),
                   const SizedBox(height: 6),
-                  Text('???', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w700, color: textPrimary)),
-                  Text('Finding...', style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
+                  Text(
+                    '???',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700,
+                      color: textPrimary,
+                    ),
+                  ),
+                  Text(
+                    'Finding...',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 10,
+                      color: textSecondary,
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -1634,16 +2533,35 @@ class _ChallengeMatchmaking extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 SizedBox(
-                  width: 14, height: 14,
-                  child: CircularProgressIndicator(strokeWidth: 2, color: color),
+                  width: 14,
+                  height: 14,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: color,
+                  ),
                 ),
                 const SizedBox(width: 10),
-                Text('Finding opponent...', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w500, color: color)),
+                Text(
+                  'Finding opponent...',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: color,
+                  ),
+                ),
               ],
             ),
           ),
           const SizedBox(height: 14),
-          Text('Matching by subject: Data Structures', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, color: textSecondary)),
+          Text(
+            'Matching by subject: Data Structures',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 11,
+              color: textSecondary,
+            ),
+          ),
         ],
       ),
     );
@@ -1658,8 +2576,12 @@ class _ChallengeLiveQuiz extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final optBg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final optBg = isDark
+        ? AppColors.surfaceElevated
+        : AppColors.backgroundLight;
 
     final options = ['O(log n)', 'O(n)', 'O(n log n)', 'O(n²)'];
     const correctIndex = 2;
@@ -1672,17 +2594,40 @@ class _ChallengeLiveQuiz extends StatelessWidget {
         children: [
           Row(
             children: [
-              Text('Question 2/10', style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: FontWeight.w600, color: color)),
+              Text(
+                'Question 2/10',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: color,
+                ),
+              ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(color: AppColors.error.withValues(alpha: 0.12), borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(
+                  color: AppColors.error.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: const Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.timer_outlined, size: 12, color: AppColors.error),
+                    Icon(
+                      Icons.timer_outlined,
+                      size: 12,
+                      color: AppColors.error,
+                    ),
                     SizedBox(width: 3),
-                    Text('0:14', style: TextStyle(fontFamily: 'Outfit', fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.error)),
+                    Text(
+                      '0:14',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.error,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -1701,7 +2646,13 @@ class _ChallengeLiveQuiz extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             'What is the time complexity of Merge Sort?',
-            style: TextStyle(fontFamily: 'Outfit', fontSize: 14, fontWeight: FontWeight.w600, color: textPrimary, height: 1.4),
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: textPrimary,
+              height: 1.4,
+            ),
           ),
           const SizedBox(height: 14),
           ...List.generate(4, (i) {
@@ -1710,31 +2661,60 @@ class _ChallengeLiveQuiz extends StatelessWidget {
               margin: const EdgeInsets.only(bottom: 7),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.success.withValues(alpha: 0.15) : optBg,
+                color: isSelected
+                    ? AppColors.success.withValues(alpha: 0.15)
+                    : optBg,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
-                  color: isSelected ? AppColors.success.withValues(alpha: 0.5) : Colors.transparent,
+                  color: isSelected
+                      ? AppColors.success.withValues(alpha: 0.5)
+                      : Colors.transparent,
                   width: 1.5,
                 ),
               ),
               child: Row(
                 children: [
                   Container(
-                    width: 22, height: 22,
+                    width: 22,
+                    height: 22,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.success : color.withValues(alpha: 0.12),
+                      color: isSelected
+                          ? AppColors.success
+                          : color.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
                       child: Text(
                         String.fromCharCode(65 + i),
-                        style: TextStyle(fontFamily: 'Outfit', fontSize: 11, fontWeight: FontWeight.w700, color: isSelected ? Colors.white : color),
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: isSelected ? Colors.white : color,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Text(options[i], style: TextStyle(fontFamily: 'Outfit', fontSize: 13, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400, color: isSelected ? AppColors.success : textPrimary)),
-                  if (isSelected) ...[const Spacer(), const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 16)],
+                  Text(
+                    options[i],
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 13,
+                      fontWeight: isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w400,
+                      color: isSelected ? AppColors.success : textPrimary,
+                    ),
+                  ),
+                  if (isSelected) ...[
+                    const Spacer(),
+                    const Icon(
+                      Icons.check_circle_rounded,
+                      color: AppColors.success,
+                      size: 16,
+                    ),
+                  ],
                 ],
               ),
             );
@@ -1753,8 +2733,12 @@ class _ChallengeResults extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bg = isDark ? AppColors.surfaceDark : Colors.white;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Container(
       color: bg,
@@ -1764,36 +2748,99 @@ class _ChallengeResults extends StatelessWidget {
           const SizedBox(height: 8),
           const Text('🎉', style: TextStyle(fontSize: 40)),
           const SizedBox(height: 8),
-          Text('You Won!', style: TextStyle(fontFamily: 'Outfit', fontSize: 26, fontWeight: FontWeight.w800, color: textPrimary)),
+          Text(
+            'You Won!',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 26,
+              fontWeight: FontWeight.w800,
+              color: textPrimary,
+            ),
+          ),
           const SizedBox(height: 4),
-          Text('Great performance in Data Structures', style: TextStyle(fontFamily: 'Outfit', fontSize: 12, color: textSecondary), textAlign: TextAlign.center),
+          Text(
+            'Great performance in Data Structures',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 12,
+              color: textSecondary,
+            ),
+            textAlign: TextAlign.center,
+          ),
           const SizedBox(height: 18),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _ScoreColumn(name: 'You', score: '8/10', color: color, isDark: isDark, isWinner: true),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                child: Text('vs', style: TextStyle(fontFamily: 'Outfit', fontSize: 14, color: textSecondary)),
+              _ScoreColumn(
+                name: 'You',
+                score: '8/10',
+                color: color,
+                isDark: isDark,
+                isWinner: true,
               ),
-              _ScoreColumn(name: 'Ali M.', score: '5/10', color: const Color(0xFF1E88E5), isDark: isDark, isWinner: false),
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 8,
+                ),
+                child: Text(
+                  'vs',
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 14,
+                    color: textSecondary,
+                  ),
+                ),
+              ),
+              _ScoreColumn(
+                name: 'Ali M.',
+                score: '5/10',
+                color: const Color(0xFF1E88E5),
+                isDark: isDark,
+                isWinner: false,
+              ),
             ],
           ),
           const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
             decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [AppColors.reward.withValues(alpha: 0.9), AppColors.rewardDark.withValues(alpha: 0.9)]),
+              gradient: LinearGradient(
+                colors: [
+                  AppColors.reward.withValues(alpha: 0.9),
+                  AppColors.rewardDark.withValues(alpha: 0.9),
+                ],
+              ),
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text('+150 XP', style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.w800, color: Colors.white)),
+            child: const Text(
+              '+150 XP',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 16,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+              ),
+            ),
           ),
           const SizedBox(height: 16),
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12),
-            decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(12)),
-            child: const Text('Play Again', style: TextStyle(fontFamily: 'Outfit', fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white), textAlign: TextAlign.center),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Text(
+              'Play Again',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 14,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+              textAlign: TextAlign.center,
+            ),
           ),
         ],
       ),
@@ -1802,7 +2849,13 @@ class _ChallengeResults extends StatelessWidget {
 }
 
 class _ScoreColumn extends StatelessWidget {
-  const _ScoreColumn({required this.name, required this.score, required this.color, required this.isDark, required this.isWinner});
+  const _ScoreColumn({
+    required this.name,
+    required this.score,
+    required this.color,
+    required this.isDark,
+    required this.isWinner,
+  });
   final String name;
   final String score;
   final Color color;
@@ -1811,25 +2864,59 @@ class _ScoreColumn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
 
     return Column(
       children: [
         _MockAvatar(name: name, size: 44, color: color),
         const SizedBox(height: 6),
-        Text(name, style: TextStyle(fontFamily: 'Outfit', fontSize: 12, fontWeight: FontWeight.w600, color: textPrimary)),
+        Text(
+          name,
+          style: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+            color: textPrimary,
+          ),
+        ),
         const SizedBox(height: 2),
-        Text(score, style: TextStyle(fontFamily: 'Outfit', fontSize: 18, fontWeight: FontWeight.w800, color: color)),
+        Text(
+          score,
+          style: TextStyle(
+            fontFamily: 'Outfit',
+            fontSize: 18,
+            fontWeight: FontWeight.w800,
+            color: color,
+          ),
+        ),
         if (isWinner)
           Container(
             margin: const EdgeInsets.only(top: 3),
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-            decoration: BoxDecoration(color: AppColors.success.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
-            child: const Text('Winner', style: TextStyle(fontFamily: 'Outfit', fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.success)),
+            decoration: BoxDecoration(
+              color: AppColors.success.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: const Text(
+              'Winner',
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 9,
+                fontWeight: FontWeight.w700,
+                color: AppColors.success,
+              ),
+            ),
           )
         else
-          Text(textSecondary.toString() == textSecondary.toString() ? '' : '', style: const TextStyle(fontSize: 0)),
+          Text(
+            textSecondary.toString() == textSecondary.toString() ? '' : '',
+            style: const TextStyle(fontSize: 0),
+          ),
       ],
     );
   }
@@ -1840,14 +2927,24 @@ class _ScoreColumn extends StatelessWidget {
 // ===========================================================================
 
 class _MockAvatar extends StatelessWidget {
-  const _MockAvatar({required this.name, required this.size, required this.color});
+  const _MockAvatar({
+    required this.name,
+    required this.size,
+    required this.color,
+  });
   final String name;
   final double size;
   final Color color;
 
   @override
   Widget build(BuildContext context) {
-    final initials = name.trim().split(' ').map((w) => w.isNotEmpty ? w[0] : '').take(2).join().toUpperCase();
+    final initials = name
+        .trim()
+        .split(' ')
+        .map((w) => w.isNotEmpty ? w[0] : '')
+        .take(2)
+        .join()
+        .toUpperCase();
     return Container(
       width: size,
       height: size,
@@ -1872,7 +2969,12 @@ class _MockAvatar extends StatelessWidget {
 }
 
 class _StatPill extends StatelessWidget {
-  const _StatPill({required this.label, required this.value, required this.color, required this.isDark});
+  const _StatPill({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.isDark,
+  });
   final String label;
   final String value;
   final Color color;
@@ -1880,7 +2982,9 @@ class _StatPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondaryLight;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondaryLight;
     final bg = isDark ? AppColors.surfaceElevated : AppColors.backgroundLight;
 
     return Container(
@@ -1891,8 +2995,23 @@ class _StatPill extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text(value, style: TextStyle(fontFamily: 'Outfit', fontSize: 16, fontWeight: FontWeight.w700, color: color)),
-          Text(label, style: TextStyle(fontFamily: 'Outfit', fontSize: 10, color: textSecondary)),
+          Text(
+            value,
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 10,
+              color: textSecondary,
+            ),
+          ),
         ],
       ),
     );

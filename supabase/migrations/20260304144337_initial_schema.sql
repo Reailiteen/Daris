@@ -1,5 +1,5 @@
 -- =============================================================================
--- FocusFlow Database Schema
+-- Daris Database Schema
 -- Supabase / PostgreSQL
 -- Covers: UC-1 through UC-15
 -- =============================================================================
@@ -478,4 +478,3 @@ $$;
 create trigger on_auth_user_created
   after insert on auth.users
   for each row execute procedure handle_new_user();
-

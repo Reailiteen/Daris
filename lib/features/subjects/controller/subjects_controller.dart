@@ -1,4 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../core/theme/app_theme.dart';
 import '../../../data/models/study_task.dart';
 import '../../../data/models/subject.dart';
 import '../../../data/services/supabase_service.dart';
@@ -33,6 +35,7 @@ class SubjectsController extends GetxController {
     required String name,
     String? syllabusBook,
     String? syllabusFilePath,
+    String? materialNotes,
     DateTime? examDate,
     int numQuizzes = 0,
     int numAssignments = 0,
@@ -49,6 +52,7 @@ class SubjectsController extends GetxController {
         name: name.trim(),
         syllabusBook: syllabusBook,
         syllabusFilePath: syllabusFilePath,
+        materialNotes: materialNotes,
         examDate: examDate,
         numQuizzes: numQuizzes,
         numAssignments: numAssignments,
@@ -64,10 +68,18 @@ class SubjectsController extends GetxController {
       final n = name.trim();
 
       for (var i = 1; i <= numQuizzes; i++) {
-        await tasksCtrl.addTask('Quiz $i – $n', TaskDifficulty.small, subject.id);
+        await tasksCtrl.addTask(
+          'Quiz $i – $n',
+          TaskDifficulty.small,
+          subject.id,
+        );
       }
       for (var i = 1; i <= numAssignments; i++) {
-        await tasksCtrl.addTask('Assignment $i – $n', TaskDifficulty.medium, subject.id);
+        await tasksCtrl.addTask(
+          'Assignment $i – $n',
+          TaskDifficulty.medium,
+          subject.id,
+        );
       }
       for (var i = 1; i <= numMidterms; i++) {
         final label = numMidterms > 1 ? 'Midterm $i' : 'Midterm';
@@ -78,7 +90,11 @@ class SubjectsController extends GetxController {
         await tasksCtrl.addTask('$label – $n', TaskDifficulty.hard, subject.id);
       }
       for (var i = 1; i <= numProjects; i++) {
-        await tasksCtrl.addTask('Project $i – $n', TaskDifficulty.hard, subject.id);
+        await tasksCtrl.addTask(
+          'Project $i – $n',
+          TaskDifficulty.hard,
+          subject.id,
+        );
       }
     } catch (_) {}
   }
@@ -87,6 +103,38 @@ class SubjectsController extends GetxController {
     try {
       await _supabaseService.deleteSubject(subjectId);
       subjects.removeWhere((s) => s.id == subjectId);
-    } catch (_) {}
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Could not delete subject. Please try again.',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: AppColors.error.withValues(alpha: 0.9),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 12,
+      );
+    }
+  }
+
+  Future<void> updateSubject({
+    required Subject subject,
+    required String name,
+    String? syllabusBook,
+    String? materialNotes,
+  }) async {
+    await _supabaseService.updateSubject(
+      subjectId: subject.id,
+      name: name.trim(),
+      syllabusBook: syllabusBook?.trim(),
+      materialNotes: materialNotes?.trim(),
+    );
+    final index = subjects.indexWhere((item) => item.id == subject.id);
+    if (index >= 0) {
+      subjects[index] = subject.copyWith(
+        name: name.trim(),
+        syllabusBook: syllabusBook?.trim(),
+        materialNotes: materialNotes?.trim(),
+      );
+    }
   }
 }

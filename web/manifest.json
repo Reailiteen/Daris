@@ -1,11 +1,11 @@
 {
-    "name": "focus_flow_flutter",
-    "short_name": "focus_flow_flutter",
+    "name": "Daris",
+    "short_name": "Daris",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Study more. Unlock more.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

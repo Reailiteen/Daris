@@ -102,6 +102,10 @@ For "openEnded": add "expectedAnswer" (concise model answer, 2-3 sentences max).
   }
 
   Future<String> _chat(String systemPrompt, String userMessage) async {
+    if (_apiKey.isEmpty) {
+      throw Exception('GROQ_API_KEY is not set in .env');
+    }
+
     final body = jsonEncode({
       'model': _kGroqModel,
       'messages': [
@@ -119,6 +123,11 @@ For "openEnded": add "expectedAnswer" (concise model answer, 2-3 sentences max).
       },
       body: body,
     );
+
+    if (response.statusCode == 401) {
+      debugPrint('Groq API: invalid or missing API key');
+      throw Exception('Invalid Groq API key');
+    }
 
     if (response.statusCode != 200) {
       debugPrint('Groq API error ${response.statusCode}: ${response.body}');

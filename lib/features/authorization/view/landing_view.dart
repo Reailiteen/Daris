@@ -8,25 +8,9 @@ class LandingView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: AppColors.backgroundLight,
       body: Stack(
         children: [
-          // Radial gradient overlay — purple glow at top-center
-          Positioned.fill(
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                gradient: RadialGradient(
-                  center: const Alignment(0.0, -0.85),
-                  radius: 0.9,
-                  colors: [
-                    AppColors.primary.withValues(alpha: 0.08),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 28.0),
@@ -42,13 +26,6 @@ class LandingView extends StatelessWidget {
                     decoration: BoxDecoration(
                       gradient: AppColors.primaryGradient,
                       borderRadius: BorderRadius.circular(22),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.primary.withValues(alpha: 0.40),
-                          blurRadius: 28,
-                          offset: const Offset(0, 8),
-                        ),
-                      ],
                     ),
                     child: const Icon(
                       Icons.bolt_rounded,
@@ -60,11 +37,11 @@ class LandingView extends StatelessWidget {
                   const SizedBox(height: 28),
 
                   const Text(
-                    'Merit',
+                    'Daris',
                     style: TextStyle(
                       fontSize: 44,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: AppColors.textPrimaryLight,
                       letterSpacing: -1.5,
                     ),
                   ),
@@ -77,7 +54,7 @@ class LandingView extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w400,
-                      color: AppColors.textSecondaryDark,
+                      color: AppColors.textSecondaryLight,
                     ),
                   ),
 
@@ -140,6 +117,12 @@ class LandingView extends StatelessWidget {
                       ),
                     ),
                   ),
+                  const SizedBox(height: 12),
+                  TextButton.icon(
+                    onPressed: () => Get.toNamed('/demo'),
+                    icon: const Icon(Icons.play_circle_outline_rounded),
+                    label: const Text('Try the offline demo'),
+                  ),
 
                   const SizedBox(height: 40),
                 ],
@@ -173,7 +156,7 @@ class _FeaturePill extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        color: AppColors.surfaceDark,
+        color: AppColors.surfaceLight,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
@@ -186,7 +169,7 @@ class _FeaturePill extends StatelessWidget {
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w500,
-              color: Colors.white,
+              color: AppColors.textPrimaryLight,
             ),
           ),
         ],
@@ -213,13 +196,6 @@ class _GradientButton extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(18),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.35),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,

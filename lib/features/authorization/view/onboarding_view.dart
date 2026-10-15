@@ -42,7 +42,7 @@ class OnboardingView extends GetView<AuthorizationController> {
                 const SizedBox(height: 48),
                 
                 Text(
-                  'Merit',
+                  'Daris',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,

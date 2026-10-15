@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'core/theme/app_theme.dart';
 import 'data/services/focus_flow_service.dart';
-import 'data/services/groq_service.dart';
+import 'data/services/fireworks_service.dart';
 import 'data/services/supabase_service.dart';
 import 'features/authorization/bindings/auth_binding.dart';
 import 'features/authorization/bindings/authorization_binding.dart';
-import 'features/authorization/view/email_verification_view.dart';
 import 'features/authorization/view/landing_view.dart';
 import 'features/authorization/view/login_view.dart';
 import 'features/authorization/view/onboarding_view.dart';
@@ -20,6 +20,7 @@ import 'features/tasks/bindings/tasks_binding.dart';
 import 'features/tasks/view/tasks_view.dart';
 import 'features/home/bindings/home_binding.dart';
 import 'features/home/view/home_view.dart';
+import 'features/demo/bindings/demo_mode_binding.dart';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -34,8 +35,14 @@ void main() async {
   }
 
   await Supabase.initialize(
-    url: dotenv.env['SUPABASE_URL'] ?? '',
-    anonKey: dotenv.env['SUPABASE_ANON_KEY'] ?? '',
+    url:
+        dotenv.env['NEXT_PUBLIC_SUPABASE_URL'] ??
+        dotenv.env['SUPABASE_URL'] ??
+        '',
+    anonKey:
+        dotenv.env['NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY'] ??
+        dotenv.env['SUPABASE_ANON_KEY'] ??
+        '',
   );
 
   // Restore session so currentUser is available before resolving route
@@ -50,7 +57,7 @@ void main() async {
 
   await Get.putAsync(() async => SupabaseService());
   await Get.putAsync(() async => FocusFlowService());
-  await Get.putAsync(() async => GroqService());
+  await Get.putAsync(() async => FireworksService());
 
   final initialRoute = await _resolveInitialRoute();
   _resolvedRoute = initialRoute;
@@ -121,9 +128,7 @@ class _BootstrapPage extends StatelessWidget {
         Get.offAllNamed(_resolvedRoute);
       }
     });
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
-    );
+    return const Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
 
@@ -133,11 +138,15 @@ class FocusFlowApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Merit',
+      title: 'Daris',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
+      builder: (context, child) => AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle.dark,
+        child: child ?? const SizedBox.shrink(),
+      ),
       initialRoute: '/',
       getPages: [
         GetPage(name: '/', page: () => const _BootstrapPage()),
@@ -157,11 +166,6 @@ class FocusFlowApp extends StatelessWidget {
           binding: AuthBinding(),
         ),
         GetPage(
-          name: '/email-verification',
-          page: () => const EmailVerificationView(),
-          binding: AuthBinding(),
-        ),
-        GetPage(
           name: '/onboarding-wizard',
           page: () => const OnboardingWizardView(),
           binding: AuthBinding(),
@@ -175,6 +179,11 @@ class FocusFlowApp extends StatelessWidget {
           name: '/home',
           page: () => const HomeView(),
           binding: HomeBinding(),
+        ),
+        GetPage(
+          name: '/demo',
+          page: () => const HomeView(demo: true),
+          binding: DemoModeBinding(),
         ),
         GetPage(
           name: '/ai-questions',

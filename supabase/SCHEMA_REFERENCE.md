@@ -1,4 +1,4 @@
-# FocusFlow — Database Schema Reference
+# Daris — Database Schema Reference
 
 All tables live in the `public` schema on Supabase (PostgreSQL).  
 `auth.users` is managed by Supabase Auth and is never touched directly.

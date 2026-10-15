@@ -11,6 +11,9 @@ class ScheduleManager {
     
     /// Activity name for focus sessions
     private let focusSessionActivity = DeviceActivityName("focusSession")
+
+    /// Activity name for screen time usage (earning credit → spending it)
+    private let screenTimeActivity = DeviceActivityName("screenTimeUsage")
     
     /// App group identifier for sharing state with extensions
     private let appGroupIdentifier = "group.com.focusflow.shared"
@@ -87,6 +90,64 @@ class ScheduleManager {
         center.stopMonitoring([focusSessionActivity])
         clearScheduleInfo()
         print("ScheduleManager: Cancelled all schedules")
+    }
+
+    // MARK: - Screen Time Usage Scheduling
+
+    /// Start per-minute DeviceActivity event tracking for screen time credit.
+    /// Each minute of actual blocked-app usage fires eventDidReachThreshold in the extension,
+    /// which deducts from the balance. When exhausted the extension re-blocks.
+    func scheduleScreenTimeUsage(balanceMinutes: Int, selection: FamilyActivitySelection) {
+        let now = Date()
+        // Use end-of-day so the schedule window is always open.
+        let calendar = Calendar.current
+        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: now) ?? now.addingTimeInterval(86400)
+        let startComponents = calendar.dateComponents([.hour, .minute, .second], from: now)
+        let endComponents = calendar.dateComponents([.hour, .minute, .second], from: endOfDay)
+
+        let schedule = DeviceActivitySchedule(
+            intervalStart: startComponents,
+            intervalEnd: endComponents,
+            repeats: false,
+            warningTime: nil
+        )
+
+        // Build one event per minute — each fires when cumulative app usage hits that minute mark.
+        var events: [DeviceActivityEvent.Name: DeviceActivityEvent] = [:]
+        for minute in 1...max(1, balanceMinutes) {
+            let name = DeviceActivityEvent.Name("st_min_\(minute)")
+            events[name] = DeviceActivityEvent(
+                applications: selection.applicationTokens,
+                categories: selection.categoryTokens,
+                threshold: DateComponents(minute: minute)
+            )
+        }
+
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            sharedDefaults.set(now, forKey: "screenTimeSessionStart")
+            sharedDefaults.set(balanceMinutes, forKey: "screenTimeBalanceMinutes")
+            sharedDefaults.set(0, forKey: "screenTimeMinutesUsed")
+            sharedDefaults.set(true, forKey: "screenTimeSessionActive")
+        }
+
+        do {
+            try center.startMonitoring(screenTimeActivity, during: schedule, events: events)
+            print("ScheduleManager: Screen time tracking started — \(balanceMinutes) minute events registered")
+        } catch {
+            print("ScheduleManager: Failed to start screen time monitoring: \(error)")
+        }
+    }
+
+    /// Cancel an active screen time session
+    func cancelScreenTimeSchedule() {
+        center.stopMonitoring([screenTimeActivity])
+        if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+            sharedDefaults.set(false, forKey: "screenTimeSessionActive")
+            sharedDefaults.removeObject(forKey: "screenTimeSessionStart")
+            sharedDefaults.removeObject(forKey: "screenTimeBalanceMinutes")
+            sharedDefaults.removeObject(forKey: "screenTimeMinutesUsed")
+        }
+        print("ScheduleManager: Screen time schedule cancelled")
     }
     
     /// Get all active schedule names

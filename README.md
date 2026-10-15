@@ -1,6 +1,6 @@
-# focus_flow_flutter
+# Daris
 
-A new Flutter project.
+Daris helps students earn screen time by studying.
 
 ## Setup
 
@@ -17,3 +17,15 @@ cp .env.example .env
 
 If `.env` is missing the app will still start, but Supabase initialization will use
 empty strings and may fail.
+# Daris
+
+## AI configuration
+
+Quick Study uses Fireworks' OpenAI-compatible serverless chat endpoint with
+`accounts/fireworks/models/glm-5p3-flash`. Add `FIREWORKS_API_KEY`
+to `.env` to enable product-mode question generation. Demo Mode is completely
+offline and needs neither a key nor a network connection.
+
+This competition build reads the key in the Flutter client for simplicity. Do
+not ship that approach in production: put the Fireworks call behind an
+authenticated server-side proxy so the key is never distributed to clients.

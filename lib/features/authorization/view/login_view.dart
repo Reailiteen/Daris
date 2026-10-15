@@ -11,16 +11,19 @@ class LoginView extends GetView<AuthController> {
   Widget build(BuildContext context) {
     final formKey = GlobalKey<FormState>();
     final emailController = TextEditingController();
-    final passwordController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: AppColors.backgroundLight,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         scrolledUnderElevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
+          icon: const Icon(
+            Icons.arrow_back_ios_new_rounded,
+            color: AppColors.textPrimaryLight,
+            size: 20,
+          ),
           onPressed: () => Get.back(),
         ),
       ),
@@ -34,17 +37,17 @@ class LoginView extends GetView<AuthController> {
               'Welcome back,',
               style: TextStyle(
                 fontSize: 15,
-                color: AppColors.textSecondaryDark,
+                color: AppColors.textSecondaryLight,
                 fontWeight: FontWeight.w400,
               ),
             ),
             const SizedBox(height: 4),
             const Text(
-              'Sign in to Merit',
+              'Sign in to Daris',
               style: TextStyle(
                 fontSize: 30,
                 fontWeight: FontWeight.w800,
-                color: Colors.white,
+                color: AppColors.textPrimaryLight,
                 letterSpacing: -0.8,
               ),
             ),
@@ -66,68 +69,45 @@ class LoginView extends GetView<AuthController> {
                     label: 'Email',
                     hint: 'you@example.com',
                     keyboardType: TextInputType.emailAddress,
-                    isDark: true,
+                    isDark: false,
                     validator: controller.validateEmail,
-                  ),
-                  const SizedBox(height: 20),
-                  AuthField(
-                    controller: passwordController,
-                    label: 'Password',
-                    hint: 'Your password',
-                    obscureText: true,
-                    isDark: true,
-                    validator: (v) =>
-                        v == null || v.isEmpty ? 'Password is required' : null,
                   ),
                 ],
               ),
             ),
 
-            // Forgot password
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: GestureDetector(
-                onTap: () {},
-                child: const Text(
-                  'Forgot password?',
-                  style: TextStyle(
-                    color: AppColors.primary,
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-            ),
-
             // Error message
-            Obx(() => controller.errorMessage.value != null
-                ? Padding(
-                    padding: const EdgeInsets.only(top: 16.0),
-                    child: Text(
-                      controller.errorMessage.value!,
-                      style: const TextStyle(color: AppColors.error, fontSize: 13),
-                      textAlign: TextAlign.center,
-                    ),
-                  )
-                : const SizedBox.shrink()),
+            Obx(
+              () => controller.errorMessage.value != null
+                  ? Padding(
+                      padding: const EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        controller.errorMessage.value!,
+                        style: const TextStyle(
+                          color: AppColors.error,
+                          fontSize: 13,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
 
             const SizedBox(height: 28),
 
             // Sign In CTA
-            Obx(() => AuthGradientButton(
-                  label: controller.isLoading.value ? null : 'Sign In',
-                  onTap: controller.isLoading.value
-                      ? null
-                      : () {
-                          if (formKey.currentState?.validate() ?? false) {
-                            controller.signIn(
-                              emailController.text.trim(),
-                              passwordController.text,
-                            );
-                          }
-                        },
-                )),
+            Obx(
+              () => AuthGradientButton(
+                label: controller.isLoading.value ? null : 'Sign In',
+                onTap: controller.isLoading.value
+                    ? null
+                    : () {
+                        if (formKey.currentState?.validate() ?? false) {
+                          controller.signIn(emailController.text.trim());
+                        }
+                      },
+              ),
+            ),
 
             const SizedBox(height: 20),
 
@@ -138,7 +118,7 @@ class LoginView extends GetView<AuthController> {
                 const Text(
                   "Don't have an account?  ",
                   style: TextStyle(
-                    color: AppColors.textSecondaryDark,
+                    color: AppColors.textSecondaryLight,
                     fontSize: 14,
                   ),
                 ),

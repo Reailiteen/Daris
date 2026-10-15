@@ -42,14 +42,14 @@ class HomeController extends GetxController {
   final RxBool isSessionActive = false.obs;
   final RxString remainingTimeString = "00:00".obs;
   final RxDouble progress = 0.0.obs;
-  
+
   final Rx<SessionDuration> selectedDuration = SessionDuration.thirty.obs;
   final RxString sessionName = 'Focus Session'.obs;
   final Rx<SessionDifficulty> selectedDifficulty = SessionDifficulty.normal.obs;
 
   /// Check if Screen Time authorization was granted (not skipped)
   bool get canStartSession => !AuthorizationController.isAuthorizationSkipped;
-  
+
   Timer? _timer;
 
   @override
@@ -80,16 +80,16 @@ class HomeController extends GetxController {
       );
       return;
     }
-    
+
     final durationSeconds = selectedDuration.value.duration.inSeconds;
     await _service.startFocusSession(durationSeconds);
-    
+
     currentSession.value = FocusSession(
       duration: selectedDuration.value.duration,
       startTime: DateTime.now(),
       isActive: true,
     );
-    
+
     isSessionActive.value = true;
     _startTimer();
   }
@@ -97,7 +97,7 @@ class HomeController extends GetxController {
   void endSession() async {
     await _service.endFocusSession();
     _stopTimer();
-    
+
     isSessionActive.value = false;
     currentSession.value = null;
     remainingTimeString.value = "00:00";

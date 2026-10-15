@@ -22,30 +22,34 @@ import ManagedSettings
   /// This checks if the app was force-quit while blocking and unblocks if needed
   private func checkAndUnblockIfNeeded() {
     let store = ManagedSettingsStore()
-    let defaults = UserDefaults.standard
-    
-    // Check if blocking is currently active
-    let isBlocking = store.shield.applications != nil || 
-                     store.shield.applicationCategories != nil || 
+
+    let isBlocking = store.shield.applications != nil ||
+                     store.shield.applicationCategories != nil ||
                      store.shield.webDomains != nil
-    
-    if isBlocking {
-      // Check if app was properly backgrounded (has recent background time)
-      // vs. force-quit (no recent background time)
-      let lastBackgroundTime = defaults.object(forKey: "lastAppBackgroundTime") as? Date
-      let now = Date()
-      
-      // If there's no recent background time, the app was likely force-quit
-      // In this case, unblock everything to prevent permanent self-lock
-      if lastBackgroundTime == nil || now.timeIntervalSince(lastBackgroundTime!) > 60.0 {
-        print("AppDelegate: ⚠️ SAFETY CHECK - App may have been force-quit while blocking.")
-        print("AppDelegate: Unblocking all apps to prevent FocusFlow from being permanently locked.")
-        BlockingEngine.shared.unblockAll()
-      } else {
-        // App was properly backgrounded, don't unblock (focus session is still active)
-        print("AppDelegate: Blocking active, but app was properly backgrounded. Keeping blocks.")
-      }
+
+    guard isBlocking else { return }
+
+    // Never auto-unblock if a screen time credit session is active —
+    // the user intentionally kept apps blocked.
+    let screenTimeActive = UserDefaults(suiteName: "group.com.focusflow.shared")?
+        .bool(forKey: "screenTimeSessionActive") ?? false
+    if screenTimeActive {
+      print("AppDelegate: Screen time session active — keeping blocks.")
+      return
     }
+
+    // Only auto-unblock if we're NOT in a focus session
+    // (focus session state is managed by ScheduleManager / DeviceActivityMonitor).
+    let focusActive = UserDefaults(suiteName: "group.com.focusflow.shared")?
+        .bool(forKey: "isBlockingActive") ?? false
+    if focusActive {
+      print("AppDelegate: Focus session active — keeping blocks.")
+      return
+    }
+
+    // Blocking is on but no session is active — stale state, clear it.
+    print("AppDelegate: Stale blocking state detected — clearing shields.")
+    BlockingEngine.shared.unblockAll()
   }
   
   override func applicationDidEnterBackground(_ application: UIApplication) {

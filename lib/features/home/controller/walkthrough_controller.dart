@@ -11,8 +11,8 @@ import '../../../data/services/supabase_service.dart';
 class WalkthroughController extends GetxController {
   final _supabase = Get.find<SupabaseService>();
 
-  final RxBool isActive    = false.obs;
-  final RxInt  currentStep = 0.obs;
+  final RxBool isActive = false.obs;
+  final RxInt currentStep = 0.obs;
 
   static const int totalSteps = 3;
   static const String _flagFile = 'walkthrough_complete.flag';

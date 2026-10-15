@@ -62,10 +62,7 @@ class _ComingSoonTabState extends State<ComingSoonTab>
       )..repeat(reverse: true);
     });
     _floatAnim = List.generate(_features.length, (i) {
-      return CurvedAnimation(
-        parent: _floatCtrl[i],
-        curve: Curves.easeInOut,
-      );
+      return CurvedAnimation(parent: _floatCtrl[i], curve: Curves.easeInOut);
     });
     // Stagger start positions via phase offset hack: jump to start
     for (var i = 0; i < _floatCtrl.length; i++) {
@@ -85,8 +82,12 @@ class _ComingSoonTabState extends State<ComingSoonTab>
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final bg = isDark ? AppColors.backgroundDark : AppColors.backgroundLight;
-    final textPrimary = isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final textSecondary = isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondary;
     final cardBg = isDark ? AppColors.surfaceDark : AppColors.surface;
 
     return Container(
@@ -104,7 +105,9 @@ class _ComingSoonTabState extends State<ComingSoonTab>
                     // "Coming soon" pill
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 5),
+                        horizontal: 12,
+                        vertical: 5,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -115,8 +118,11 @@ class _ComingSoonTabState extends State<ComingSoonTab>
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.lock_rounded,
-                              size: 13, color: AppColors.primary),
+                          Icon(
+                            Icons.lock_rounded,
+                            size: 13,
+                            color: AppColors.primary,
+                          ),
                           const SizedBox(width: 5),
                           Text(
                             'Coming Soon',
@@ -160,33 +166,30 @@ class _ComingSoonTabState extends State<ComingSoonTab>
             SliverPadding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               sliver: SliverList(
-                delegate: SliverChildBuilderDelegate(
-                  (context, i) {
-                    return AnimatedBuilder(
-                      animation: _floatAnim[i],
-                      builder: (_, child) {
-                        final offset = -6.0 + _floatAnim[i].value * 12.0;
-                        return Transform.translate(
-                          offset: Offset(0, offset),
-                          child: child,
-                        );
-                      },
-                      child: GestureDetector(
-                        onTap: () => Navigator.of(context).push(
-                          featurePreviewRoute(kFeatures[i]),
-                        ),
-                        child: _FeatureCard(
-                          feature: _features[i],
-                          cardBg: cardBg,
-                          textPrimary: textPrimary,
-                          textSecondary: textSecondary,
-                          isDark: isDark,
-                        ),
+                delegate: SliverChildBuilderDelegate((context, i) {
+                  return AnimatedBuilder(
+                    animation: _floatAnim[i],
+                    builder: (_, child) {
+                      final offset = -6.0 + _floatAnim[i].value * 12.0;
+                      return Transform.translate(
+                        offset: Offset(0, offset),
+                        child: child,
+                      );
+                    },
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(
+                        context,
+                      ).push(featurePreviewRoute(kFeatures[i])),
+                      child: _FeatureCard(
+                        feature: _features[i],
+                        cardBg: cardBg,
+                        textPrimary: textPrimary,
+                        textSecondary: textSecondary,
+                        isDark: isDark,
                       ),
-                    );
-                  },
-                  childCount: _features.length,
-                ),
+                    ),
+                  );
+                }, childCount: _features.length),
               ),
             ),
 

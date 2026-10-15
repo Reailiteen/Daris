@@ -34,6 +34,12 @@ class NativePickerHelper: ObservableObject {
         set: { self.selection = $0 }
       ),
       onDone: {
+        // Persist selection so the extension and re-launches can read it
+        if let sharedDefaults = UserDefaults(suiteName: "group.com.focusflow.shared") {
+          if let data = try? PropertyListEncoder().encode(self.selection) {
+            sharedDefaults.set(data, forKey: "selectedFamilyActivity")
+          }
+        }
         completion(self.selection)
         hostingController?.dismiss(animated: true)
       }

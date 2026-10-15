@@ -231,13 +231,6 @@ class _Slide1Welcome extends StatelessWidget {
             decoration: BoxDecoration(
               gradient: AppColors.primaryGradient,
               borderRadius: BorderRadius.circular(32),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primary.withOpacity(0.35),
-                  blurRadius: 28,
-                  offset: const Offset(0, 10),
-                ),
-              ],
             ),
             child: const Icon(Icons.school_rounded,
                 color: Colors.white, size: 58),
@@ -245,7 +238,7 @@ class _Slide1Welcome extends StatelessWidget {
           const SizedBox(height: 32),
 
           Text(
-            'Welcome to Merit',
+            'Welcome to Daris',
             style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: isDark ? Colors.white : Colors.black87,

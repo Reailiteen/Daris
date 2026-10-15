@@ -2,15 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controller/home_controller.dart';
-import '../walkthrough_keys.dart';
 import '../../../data/models/focus_session.dart';
+import '../../app_selection/controller/app_selection_controller.dart';
 
 class StartSessionCard extends GetView<HomeController> {
   const StartSessionCard({super.key});
 
   void _showNameDialog() {
-    final textController =
-        TextEditingController(text: controller.sessionName.value);
+    final textController = TextEditingController(
+      text: controller.sessionName.value,
+    );
     Get.dialog(
       AlertDialog(
         title: const Text('Session Name'),
@@ -61,13 +62,6 @@ class StartSessionCard extends GetView<HomeController> {
       decoration: BoxDecoration(
         gradient: AppColors.primaryGradient,
         borderRadius: BorderRadius.circular(28),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.primary.withValues(alpha: 0.25),
-            blurRadius: 20,
-            offset: const Offset(0, 8),
-          ),
-        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -108,14 +102,16 @@ class StartSessionCard extends GetView<HomeController> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Obx(() => Text(
-                                controller.sessionName.value,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              )),
+                          Obx(
+                            () => Text(
+                              controller.sessionName.value,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ),
                           const SizedBox(width: 6),
                           const Icon(
                             Icons.edit_rounded,
@@ -132,7 +128,19 @@ class StartSessionCard extends GetView<HomeController> {
           ),
 
           Divider(
-              color: Colors.white.withValues(alpha: 0.15), height: 1, thickness: 1),
+            color: Colors.white.withValues(alpha: 0.15),
+            height: 1,
+            thickness: 1,
+          ),
+
+          // ── BLOCK APPS row ────────────────────────────────────────────────
+          _BlockAppsRow(),
+
+          Divider(
+            color: Colors.white.withValues(alpha: 0.15),
+            height: 1,
+            thickness: 1,
+          ),
 
           // ── MIDDLE: Duration + Difficulty pickers ─────────────────────────
           Padding(
@@ -144,14 +152,16 @@ class StartSessionCard extends GetView<HomeController> {
                     icon: Icons.timer_rounded,
                     iconColor: AppColors.primary,
                     label: 'Duration',
-                    valueWidget: Obx(() => Text(
-                          controller.selectedDuration.value.displayName,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
+                    valueWidget: Obx(
+                      () => Text(
+                        controller.selectedDuration.value.displayName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                     onTap: () => _showDurationPicker(context),
                     isDark: isDark,
                   ),
@@ -162,14 +172,16 @@ class StartSessionCard extends GetView<HomeController> {
                     icon: Icons.bolt_rounded,
                     iconColor: AppColors.warning,
                     label: 'Difficulty',
-                    valueWidget: Obx(() => Text(
-                          controller.selectedDifficulty.value.label,
-                          style: TextStyle(
-                            color: controller.selectedDifficulty.value.color,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        )),
+                    valueWidget: Obx(
+                      () => Text(
+                        controller.selectedDifficulty.value.label,
+                        style: TextStyle(
+                          color: controller.selectedDifficulty.value.color,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
                     onTap: () => _showDifficultyPicker(context),
                     isDark: isDark,
                   ),
@@ -188,37 +200,30 @@ class StartSessionCard extends GetView<HomeController> {
                 decoration: BoxDecoration(
                   gradient: AppColors.primaryGradient,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primary.withValues(alpha: 0.35),
-                      blurRadius: 18,
-                      offset: const Offset(0, 6),
-                    ),
-                  ],
                 ),
                 child: Material(
                   color: Colors.transparent,
-                  child: KeyedSubtree(
-                    key: WalkthroughKeys.blockRow,
-                    child: InkWell(
-                      onTap: controller.startSession,
-                      borderRadius: BorderRadius.circular(16),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.play_arrow_rounded,
-                              color: Colors.white, size: 22),
-                          SizedBox(width: 8),
-                          Text(
-                            'Start Session',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
+                  child: InkWell(
+                    onTap: controller.startSession,
+                    borderRadius: BorderRadius.circular(16),
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.play_arrow_rounded,
+                          color: Colors.white,
+                          size: 22,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Start Session',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -262,8 +267,7 @@ class _PickerTile extends StatelessWidget {
           borderRadius: BorderRadius.circular(DarisDecorations.cardRadius),
           border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
         ),
-        padding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -274,10 +278,7 @@ class _PickerTile extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   label,
-                  style: const TextStyle(
-                    color: Colors.white60,
-                    fontSize: 11,
-                  ),
+                  style: const TextStyle(color: Colors.white60, fontSize: 11),
                 ),
               ],
             ),
@@ -295,8 +296,7 @@ class _PickerTile extends StatelessWidget {
 class _DurationPickerSheet extends StatelessWidget {
   final HomeController controller;
   final bool isDark;
-  const _DurationPickerSheet(
-      {required this.controller, required this.isDark});
+  const _DurationPickerSheet({required this.controller, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -316,25 +316,27 @@ class _DurationPickerSheet extends StatelessWidget {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          ...SessionDuration.values.map((d) => Obx(() {
-                final selected = controller.selectedDuration.value == d;
-                return ListTile(
-                  title: Text(d.displayName),
-                  trailing: selected
-                      ? const Icon(Icons.check_circle,
-                          color: AppColors.primary)
-                      : null,
-                  tileColor: selected
-                      ? AppColors.primary.withValues(alpha: 0.08)
-                      : null,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
-                  onTap: () {
-                    controller.selectedDuration.value = d;
-                    Get.back();
-                  },
-                );
-              })),
+          ...SessionDuration.values.map(
+            (d) => Obx(() {
+              final selected = controller.selectedDuration.value == d;
+              return ListTile(
+                title: Text(d.displayName),
+                trailing: selected
+                    ? const Icon(Icons.check_circle, color: AppColors.primary)
+                    : null,
+                tileColor: selected
+                    ? AppColors.primary.withValues(alpha: 0.08)
+                    : null,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                onTap: () {
+                  controller.selectedDuration.value = d;
+                  Get.back();
+                },
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -346,8 +348,10 @@ class _DurationPickerSheet extends StatelessWidget {
 class _DifficultyPickerSheet extends StatelessWidget {
   final HomeController controller;
   final bool isDark;
-  const _DifficultyPickerSheet(
-      {required this.controller, required this.isDark});
+  const _DifficultyPickerSheet({
+    required this.controller,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -373,67 +377,72 @@ class _DifficultyPickerSheet extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 20),
-          ...SessionDifficulty.values.map((d) => Obx(() {
-                final selected = controller.selectedDifficulty.value == d;
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: GestureDetector(
-                    onTap: () {
-                      controller.selectedDifficulty.value = d;
-                      Get.back();
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
+          ...SessionDifficulty.values.map(
+            (d) => Obx(() {
+              final selected = controller.selectedDifficulty.value == d;
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: GestureDetector(
+                  onTap: () {
+                    controller.selectedDifficulty.value = d;
+                    Get.back();
+                  },
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? AppColors.primary.withValues(alpha: 0.1)
+                          : isDark
+                          ? Colors.white.withValues(alpha: 0.05)
+                          : Colors.grey.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(
                         color: selected
-                            ? AppColors.primary.withValues(alpha: 0.1)
-                            : isDark
-                                ? Colors.white.withValues(alpha: 0.05)
-                                : Colors.grey.withValues(alpha: 0.05),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: selected
-                              ? AppColors.primary
-                              : Colors.transparent,
-                          width: 1.5,
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(d.icon, color: d.color, size: 24),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  d.label,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  d.description,
-                                  style: const TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (selected)
-                            const Icon(Icons.check_circle,
-                                color: AppColors.primary, size: 20),
-                        ],
+                            ? AppColors.primary
+                            : Colors.transparent,
+                        width: 1.5,
                       ),
                     ),
+                    child: Row(
+                      children: [
+                        Icon(d.icon, color: d.color, size: 24),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                d.label,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 15,
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                d.description,
+                                style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (selected)
+                          const Icon(
+                            Icons.check_circle,
+                            color: AppColors.primary,
+                            size: 20,
+                          ),
+                      ],
+                    ),
                   ),
-                );
-              })),
+                ),
+              );
+            }),
+          ),
         ],
       ),
     );
@@ -449,6 +458,56 @@ class _SheetHandle extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.grey.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(2),
+      ),
+    );
+  }
+}
+
+// ── Block Apps row ───────────────────────────────────────────────────────────
+
+class _BlockAppsRow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final appSel = Get.find<AppSelectionController>();
+
+    return InkWell(
+      onTap: appSel.openPicker,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+        child: Row(
+          children: [
+            const Icon(Icons.block_rounded, color: Colors.white70, size: 20),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Blocked Apps',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Obx(() {
+              final count = appSel.totalSelectedCount.value;
+              return Text(
+                count == 0 ? 'None selected' : '$count selected',
+                style: TextStyle(
+                  color: count == 0
+                      ? Colors.white38
+                      : Colors.white.withValues(alpha: 0.75),
+                  fontSize: 13,
+                ),
+              );
+            }),
+            const SizedBox(width: 6),
+            const Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white54,
+              size: 18,
+            ),
+          ],
+        ),
       ),
     );
   }

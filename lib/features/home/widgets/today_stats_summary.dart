@@ -21,31 +21,33 @@ class TodayStatsSummary extends GetView<StatisticsController> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          Obx(() => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _StatItem(
-                icon: Icons.access_time_filled,
-                value: controller.totalFocusTime.value,
-                label: 'Focus time',
-                color: AppColors.primary,
-              ),
-              _VerticalDivider(),
-              _StatItem(
-                icon: Icons.local_fire_department,
-                value: controller.dayStreak.value.toString(),
-                label: 'Day streak',
-                color: Colors.orange,
-              ),
-              _VerticalDivider(),
-              _StatItem(
-                icon: Icons.check_circle,
-                value: '0',
-                label: 'All sessions',
-                color: Colors.green,
-              ),
-            ],
-          )),
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _StatItem(
+                  icon: Icons.access_time_filled,
+                  value: controller.totalFocusTime.value,
+                  label: 'Focus time',
+                  color: AppColors.primary,
+                ),
+                _VerticalDivider(),
+                _StatItem(
+                  icon: Icons.local_fire_department,
+                  value: controller.dayStreak.value.toString(),
+                  label: 'Day streak',
+                  color: Colors.orange,
+                ),
+                _VerticalDivider(),
+                _StatItem(
+                  icon: Icons.check_circle,
+                  value: '0',
+                  label: 'All sessions',
+                  color: Colors.green,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -76,10 +78,7 @@ class _StatItem extends StatelessWidget {
             value,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
-          ),
+          Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         ],
       ),
     );

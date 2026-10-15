@@ -83,32 +83,8 @@ class MeritColors {
   // Reward dark (legacy)
   static const Color rewardDark = Color(0xFFFF9500);
 
-  // Shadow lists — using withValues to avoid deprecation warnings
-  static List<BoxShadow> cardShadow = [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.18),
-      blurRadius: 20,
-      offset: const Offset(0, 4),
-    ),
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.06),
-      blurRadius: 6,
-      offset: const Offset(0, 1),
-    ),
-  ];
-
-  static List<BoxShadow> elevatedShadow = [
-    BoxShadow(
-      color: Color(0xFF5856D6).withValues(alpha: 0.15),
-      blurRadius: 32,
-      offset: const Offset(0, 8),
-    ),
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.25),
-      blurRadius: 16,
-      offset: const Offset(0, 4),
-    ),
-  ];
+  static const List<BoxShadow> cardShadow = [];
+  static const List<BoxShadow> elevatedShadow = [];
 
   // Legacy gradient helper
   static LinearGradient backgroundGradient(bool isDark) {
@@ -129,63 +105,46 @@ class MeritDecorations {
   static const double chipRadius = 12;
 
   static BoxDecoration card(bool isDark) => BoxDecoration(
-        color: isDark ? MeritColors.surfaceDark : MeritColors.surfaceLight,
-        borderRadius: BorderRadius.circular(cardRadius),
-        border: Border.all(
-          color: isDark
-              ? MeritColors.border.withValues(alpha: 0.5)
-              : Colors.black.withValues(alpha: 0.08),
-          width: 1,
-        ),
-        boxShadow: isDark
-            ? [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.30),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-              ]
-            : MeritColors.cardShadow,
-      );
+    color: isDark ? MeritColors.surfaceDark : MeritColors.surfaceLight,
+    borderRadius: BorderRadius.circular(cardRadius),
+    border: Border.all(
+      color: isDark
+          ? MeritColors.border.withValues(alpha: 0.5)
+          : Colors.black.withValues(alpha: 0.08),
+      width: 1,
+    ),
+    boxShadow: null,
+  );
 
   static BoxDecoration elevatedCard(bool isDark) => BoxDecoration(
-        color: isDark ? MeritColors.surfaceElevated : MeritColors.surfaceLight,
-        borderRadius: BorderRadius.circular(cardRadius),
-        border: Border.all(
-          color: isDark
-              ? MeritColors.border.withValues(alpha: 0.5)
-              : Colors.black.withValues(alpha: 0.08),
-          width: 1,
-        ),
-        boxShadow: MeritColors.elevatedShadow,
-      );
+    color: isDark ? MeritColors.surfaceElevated : MeritColors.surfaceLight,
+    borderRadius: BorderRadius.circular(cardRadius),
+    border: Border.all(
+      color: isDark
+          ? MeritColors.border.withValues(alpha: 0.5)
+          : Colors.black.withValues(alpha: 0.08),
+      width: 1,
+    ),
+    boxShadow: null,
+  );
 
   static BoxDecoration pill(bool isDark) => BoxDecoration(
-        color: isDark ? MeritColors.surfaceDark : MeritColors.surfaceLight,
-        borderRadius: BorderRadius.circular(pillRadius),
-        border: Border.all(
-          color: isDark
-              ? MeritColors.border.withValues(alpha: 0.5)
-              : Colors.black.withValues(alpha: 0.08),
-          width: 1,
-        ),
-      );
+    color: isDark ? MeritColors.surfaceDark : MeritColors.surfaceLight,
+    borderRadius: BorderRadius.circular(pillRadius),
+    border: Border.all(
+      color: isDark
+          ? MeritColors.border.withValues(alpha: 0.5)
+          : Colors.black.withValues(alpha: 0.08),
+      width: 1,
+    ),
+  );
 
   static BoxDecoration glassCard() => BoxDecoration(
-        color: MeritColors.backgroundDark.withValues(alpha: 0.80),
-        borderRadius: BorderRadius.circular(cardRadius),
-        border: Border.all(
-          color: MeritColors.border,
-          width: 1,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.40),
-            blurRadius: 24,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      );
+    color: MeritColors.backgroundDark.withValues(alpha: 0.80),
+    borderRadius: BorderRadius.circular(cardRadius),
+    border: Border.all(color: MeritColors.border, width: 1),
+    boxShadow: null,
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -194,8 +153,8 @@ class MeritDecorations {
 class AppTheme {
   AppTheme._();
 
-  // Merit is dark-first; default getter returns darkTheme.
-  static ThemeData get theme => darkTheme;
+  // Daris uses light mode throughout the app.
+  static ThemeData get theme => lightTheme;
 
   static ThemeData get darkTheme {
     final base = ThemeData.dark(useMaterial3: true);
@@ -325,13 +284,12 @@ class AppTheme {
             return MeritColors.primary;
           }),
           foregroundColor: WidgetStateProperty.all(Colors.white),
-          minimumSize: WidgetStateProperty.all(
-            const Size(double.infinity, 56),
-          ),
+          minimumSize: WidgetStateProperty.all(const Size(double.infinity, 56)),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(MeritDecorations.buttonRadius),
+              borderRadius: BorderRadius.circular(
+                MeritDecorations.buttonRadius,
+              ),
             ),
           ),
           elevation: WidgetStateProperty.all(0),
@@ -362,8 +320,7 @@ class AppTheme {
           side: const BorderSide(color: MeritColors.primary, width: 1.5),
           minimumSize: const Size(double.infinity, 56),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(MeritDecorations.buttonRadius),
+            borderRadius: BorderRadius.circular(MeritDecorations.buttonRadius),
           ),
           textStyle: GoogleFonts.outfit(
             fontSize: 16,
@@ -374,8 +331,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: MeritColors.surfaceElevated,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
@@ -386,24 +345,15 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.primary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.error, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.error, width: 1.5),
         ),
         hintStyle: GoogleFonts.outfit(
           fontSize: 14,
@@ -413,10 +363,7 @@ class AppTheme {
           fontSize: 14,
           color: MeritColors.textSecondaryDark,
         ),
-        errorStyle: GoogleFonts.outfit(
-          fontSize: 12,
-          color: MeritColors.error,
-        ),
+        errorStyle: GoogleFonts.outfit(fontSize: 12, color: MeritColors.error),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: MeritColors.surfaceElevated,
@@ -462,9 +409,7 @@ class AppTheme {
           fontSize: 14,
           color: MeritColors.textPrimaryDark,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
       dialogTheme: DialogThemeData(
@@ -625,13 +570,12 @@ class AppTheme {
             return MeritColors.primary;
           }),
           foregroundColor: WidgetStateProperty.all(Colors.white),
-          minimumSize: WidgetStateProperty.all(
-            const Size(double.infinity, 56),
-          ),
+          minimumSize: WidgetStateProperty.all(const Size(double.infinity, 56)),
           shape: WidgetStateProperty.all(
             RoundedRectangleBorder(
-              borderRadius:
-                  BorderRadius.circular(MeritDecorations.buttonRadius),
+              borderRadius: BorderRadius.circular(
+                MeritDecorations.buttonRadius,
+              ),
             ),
           ),
           elevation: WidgetStateProperty.all(0),
@@ -662,8 +606,7 @@ class AppTheme {
           side: const BorderSide(color: MeritColors.primary, width: 1.5),
           minimumSize: const Size(double.infinity, 56),
           shape: RoundedRectangleBorder(
-            borderRadius:
-                BorderRadius.circular(MeritDecorations.buttonRadius),
+            borderRadius: BorderRadius.circular(MeritDecorations.buttonRadius),
           ),
           textStyle: GoogleFonts.outfit(
             fontSize: 16,
@@ -674,8 +617,10 @@ class AppTheme {
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.black.withValues(alpha: 0.04),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
           borderSide: BorderSide.none,
@@ -686,24 +631,15 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.primary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.primary, width: 1.5),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.error, width: 1.5),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: const BorderSide(
-            color: MeritColors.error,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: MeritColors.error, width: 1.5),
         ),
         hintStyle: GoogleFonts.outfit(
           fontSize: 14,
@@ -713,10 +649,7 @@ class AppTheme {
           fontSize: 14,
           color: MeritColors.textSecondaryLight,
         ),
-        errorStyle: GoogleFonts.outfit(
-          fontSize: 12,
-          color: MeritColors.error,
-        ),
+        errorStyle: GoogleFonts.outfit(fontSize: 12, color: MeritColors.error),
       ),
       chipTheme: ChipThemeData(
         backgroundColor: Colors.black.withValues(alpha: 0.06),
@@ -726,10 +659,7 @@ class AppTheme {
           fontWeight: FontWeight.w500,
           color: MeritColors.textPrimaryLight,
         ),
-        side: BorderSide(
-          color: Colors.black.withValues(alpha: 0.08),
-          width: 1,
-        ),
+        side: BorderSide(color: Colors.black.withValues(alpha: 0.08), width: 1),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MeritDecorations.chipRadius),
         ),
@@ -761,9 +691,7 @@ class AppTheme {
           fontSize: 14,
           color: MeritColors.backgroundLight,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         behavior: SnackBarBehavior.floating,
       ),
       dialogTheme: DialogThemeData(

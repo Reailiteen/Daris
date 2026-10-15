@@ -1,27 +1,31 @@
 import 'package:get/get.dart';
+
+import '../../../data/models/wallet_models.dart';
+import '../../../data/services/focus_flow_service.dart';
 import '../../../data/services/supabase_service.dart';
 
 class BalanceController extends GetxController {
-  final SupabaseService _supabaseService = Get.find<SupabaseService>();
+  BalanceController({
+    SupabaseService? supabaseService,
+    FocusFlowService? focusFlowService,
+  }) : _supabaseService = supabaseService ?? Get.find<SupabaseService>(),
+       _focusFlowService = focusFlowService ?? Get.find<FocusFlowService>();
 
-  final RxInt earnedMinutesThisWeek = 0.obs;
+  final SupabaseService _supabaseService;
+  final FocusFlowService _focusFlowService;
 
-  bool get isUnlimited => earnedMinutesThisWeek.value >= 300;
+  final RxInt availableMinutes = 0.obs;
+  final RxBool isLoading = false.obs;
+  final RxString errorMessage = ''.obs;
 
-  String get formattedBalance {
-    final total = earnedMinutesThisWeek.value;
-    final h = total ~/ 60;
-    final m = total % 60;
-    if (h > 0 && m > 0) return '${h}h ${m}m';
-    if (h > 0) return '${h}h';
-    return '${m}m';
+  /// Qatar-local calendar convention: each wallet expires when Sunday starts.
+  static DateTime sundayWeekStart([DateTime? date]) {
+    final local = (date ?? DateTime.now()).toLocal();
+    final day = DateTime(local.year, local.month, local.day);
+    return day.subtract(Duration(days: day.weekday % DateTime.daysPerWeek));
   }
 
-  DateTime get _weekStart {
-    final now = DateTime.now();
-    final monday = now.subtract(Duration(days: now.weekday - 1));
-    return DateTime(monday.year, monday.month, monday.day);
-  }
+  String get formattedBalance => '$availableMinutes min available';
 
   @override
   void onInit() {
@@ -32,23 +36,72 @@ class BalanceController extends GetxController {
   Future<void> loadBalance() async {
     final user = _supabaseService.currentUser;
     if (user == null) return;
+    isLoading.value = true;
+    errorMessage.value = '';
     try {
-      final total = await _supabaseService.getWeeklyEarnings(user.id, _weekStart);
-      earnedMinutesThisWeek.value = total;
-    } catch (_) {}
+      availableMinutes.value = await _supabaseService.getWeeklyWalletBalance(
+        userId: user.id,
+        weekStart: sundayWeekStart(),
+      );
+    } catch (_) {
+      errorMessage.value = 'Could not load your wallet.';
+    } finally {
+      isLoading.value = false;
+    }
   }
 
-  Future<void> addEarning(String source, int minutes) async {
+  /// This changes wallet state only. It never invokes Screen Time.
+  Future<RewardResult> award({
+    required RewardSource source,
+    required int minutes,
+  }) async {
     final user = _supabaseService.currentUser;
-    if (user == null) return;
-    try {
-      await _supabaseService.addEarning(
-        userId: user.id,
-        source: source,
-        minutes: minutes,
-        weekStart: _weekStart,
-      );
-      earnedMinutesThisWeek.value += minutes;
-    } catch (_) {}
+    if (user == null) throw StateError('Sign in to earn screen time.');
+    final previous = availableMinutes.value;
+    await _supabaseService.addEarning(
+      userId: user.id,
+      source: source == RewardSource.quickStudy ? 'ai_question' : 'task',
+      minutes: minutes,
+      weekStart: sundayWeekStart(),
+    );
+    availableMinutes.value = previous + minutes;
+    return RewardResult(
+      previousBalance: previous,
+      earnedMinutes: minutes,
+      source: source,
+    );
   }
+
+  /// Records the spend first, then opens the selected native apps for exactly
+  /// [minutes]. Call this only after the confirmation UI has been accepted.
+  Future<SpendResult> spendOnSelectedApps(int minutes) async {
+    if (minutes <= 0) throw ArgumentError.value(minutes, 'minutes');
+    final user = _supabaseService.currentUser;
+    if (user == null) throw StateError('Sign in to spend screen time.');
+    final previous = availableMinutes.value;
+    if (previous < minutes)
+      throw StateError('You need $minutes min, but have $previous min.');
+
+    final selectedApps = await _focusFlowService.getSelectedAppsCount();
+    if (selectedApps == 0) throw const NoSelectedAppsException();
+
+    await _supabaseService.recordSpend(
+      userId: user.id,
+      minutes: minutes,
+      weekStart: sundayWeekStart(),
+    );
+    availableMinutes.value = previous - minutes;
+    try {
+      await _focusFlowService.startScreenTimeUsage(minutes);
+    } catch (_) {
+      throw StateError(
+        'Your wallet was updated, but selected apps could not be opened.',
+      );
+    }
+    return SpendResult(previousBalance: previous, spentMinutes: minutes);
+  }
+}
+
+class NoSelectedAppsException implements Exception {
+  const NoSelectedAppsException();
 }
