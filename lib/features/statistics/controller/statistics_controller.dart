@@ -5,7 +5,6 @@ import '../../../data/models/core_models.dart';
 class StatisticsController extends GetxController {
   final SupabaseService _supabase = Get.find<SupabaseService>();
 
-  final RxList<ActivitySession> allSessions = <ActivitySession>[].obs;
   final Rxn<ScreenBudget> currentBudget = Rxn<ScreenBudget>();
   final RxInt dayStreak = 0.obs;
   final RxString totalFocusTime = '0m'.obs;
@@ -47,7 +46,7 @@ class StatisticsController extends GetxController {
 
   void _calculateMetrics() {
     // Placeholder for actual calculation logic
-    totalFocusTime.value = allSessions.isEmpty ? '0m' : '${allSessions.length * 30}m';
-    dayStreak.value = allSessions.length > 5 ? 7 : 0; 
+    totalFocusTime.value = '0m';
+    dayStreak.value = 0;
   }
 }

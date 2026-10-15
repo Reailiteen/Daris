@@ -95,6 +95,39 @@ class FocusFlowService extends GetxService {
     }
   }
 
+  // MARK: - Screen Time Usage
+
+  /// Unblock selected apps for [balanceMinutes]. The DeviceActivity extension
+  /// re-blocks them automatically when the window expires.
+  Future<void> startScreenTimeUsage(int balanceMinutes) async {
+    try {
+      await _channel.invokeMethod(
+          'startScreenTimeUsage', {'balanceMinutes': balanceMinutes});
+    } on PlatformException catch (e) {
+      print('Failed to start screen time usage: ${e.message}');
+    }
+  }
+
+  /// Manually end screen time usage and immediately re-block apps.
+  Future<void> stopScreenTimeUsage() async {
+    try {
+      await _channel.invokeMethod('stopScreenTimeUsage');
+    } on PlatformException catch (e) {
+      print('Failed to stop screen time usage: ${e.message}');
+    }
+  }
+
+  /// Returns {isActive: bool, remainingMinutes: int}
+  Future<Map<String, dynamic>> getScreenTimeStatus() async {
+    try {
+      final raw = await _channel.invokeMethod<Map>('getScreenTimeStatus');
+      return raw != null ? Map<String, dynamic>.from(raw) : {};
+    } on PlatformException catch (e) {
+      print('Failed to get screen time status: ${e.message}');
+      return {'isActive': false, 'remainingMinutes': 0};
+    }
+  }
+
   // MARK: - Statistics
 
   Future<String?> getStatistics() async {

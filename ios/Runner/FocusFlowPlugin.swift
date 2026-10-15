@@ -17,6 +17,12 @@ public class FocusFlowPlugin: NSObject, FlutterPlugin {
   init(channel: FlutterMethodChannel) {
     self.channel = channel
     super.init()
+    // Restore persisted selection so blocking works after restarts
+    if let sharedDefaults = UserDefaults(suiteName: "group.com.focusflow.shared"),
+       let data = sharedDefaults.data(forKey: "selectedFamilyActivity"),
+       let saved = try? PropertyListDecoder().decode(FamilyActivitySelection.self, from: data) {
+      activitySelection = saved
+    }
   }
 
   public static func register(with registrar: FlutterPluginRegistrar) {
@@ -74,7 +80,17 @@ public class FocusFlowPlugin: NSObject, FlutterPlugin {
       }
       
     case "getSelectedAppsCount":
-      result(activitySelection.applicationTokens.count + activitySelection.categoryTokens.count)
+      // Also check persisted selection in case activitySelection wasn't loaded
+      let count = activitySelection.applicationTokens.count + activitySelection.categoryTokens.count
+      if count == 0,
+         let sharedDefaults = UserDefaults(suiteName: "group.com.focusflow.shared"),
+         let data = sharedDefaults.data(forKey: "selectedFamilyActivity"),
+         let saved = try? PropertyListDecoder().decode(FamilyActivitySelection.self, from: data) {
+        activitySelection = saved
+        result(saved.applicationTokens.count + saved.categoryTokens.count)
+      } else {
+        result(count)
+      }
       
     case "startFocusSession":
       guard let args = call.arguments as? [String: Any],
@@ -90,7 +106,8 @@ public class FocusFlowPlugin: NSObject, FlutterPlugin {
       result(nil)
       
     case "endFocusSession":
-      blockingEngine.unblockAll()
+      // Don't unblock — selected apps stay blocked by default.
+      // The user needs screen time credit to use them.
       scheduleManager.cancelAllSchedules()
       notificationService.cancelPendingNotifications()
       result(nil)
@@ -139,7 +156,39 @@ public class FocusFlowPlugin: NSObject, FlutterPlugin {
       } else {
         result(nil)
       }
-      
+
+    case "startScreenTimeUsage":
+      guard let args = call.arguments as? [String: Any],
+            let balanceMinutes = args["balanceMinutes"] as? Int else {
+        result(FlutterError(code: "INVALID_ARGS", message: "balanceMinutes missing", details: nil))
+        return
+      }
+      // Remove shields so the selected apps are usable during the credit window.
+      blockingEngine.unblockAll()
+      // Start per-minute DeviceActivity event tracking.
+      // eventDidReachThreshold fires for each minute of actual blocked-app usage.
+      // When balance is exhausted the extension re-blocks automatically.
+      scheduleManager.scheduleScreenTimeUsage(
+        balanceMinutes: balanceMinutes,
+        selection: activitySelection
+      )
+      result(nil)
+
+    case "stopScreenTimeUsage":
+      // User manually ends session — re-apply shields immediately.
+      let websites = websiteService.loadBlockedWebsites()
+      blockingEngine.blockAppsAndWebsites(selection: activitySelection, websites: websites)
+      scheduleManager.cancelScreenTimeSchedule()
+      result(nil)
+
+    case "getScreenTimeStatus":
+      let defaults = UserDefaults(suiteName: "group.com.focusflow.shared") ?? UserDefaults.standard
+      let isActive = defaults.bool(forKey: "screenTimeSessionActive")
+      let balance = defaults.integer(forKey: "screenTimeBalanceMinutes")
+      let used = defaults.integer(forKey: "screenTimeMinutesUsed")
+      let remaining = max(0, balance - used)
+      result(["isActive": isActive, "remainingMinutes": remaining])
+
     default:
       result(FlutterMethodNotImplemented)
     }
@@ -153,6 +202,10 @@ public class FocusFlowPlugin: NSObject, FlutterPlugin {
     
     NativePickerHelper.shared.presentPicker(from: rootViewController) { selection in
       self.activitySelection = selection
+      // Immediately block the selected apps outside of sessions too.
+      // Screen time credit will unblock them; studying unblocks them during sessions.
+      let websites = self.websiteService.loadBlockedWebsites()
+      self.blockingEngine.blockAppsAndWebsites(selection: selection, websites: websites)
     }
     result(nil)
   }

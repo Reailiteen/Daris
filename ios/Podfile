@@ -35,6 +35,13 @@ target 'Runner' do
   end
 end
 
+# Extension targets: inherit search paths so they can resolve Swift modules
+# (e.g. app_links from supabase_flutter) without linking the frameworks.
+target 'DeviceActivityMonitorExtension' do
+  use_frameworks!
+  inherit! :search_paths
+end
+
 post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)

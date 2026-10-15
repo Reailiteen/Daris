@@ -12,10 +12,7 @@ class TodayStatsSummary extends GetView<StatisticsController> {
 
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -24,31 +21,33 @@ class TodayStatsSummary extends GetView<StatisticsController> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
-          Obx(() => Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _StatItem(
-                icon: Icons.access_time_filled,
-                value: controller.totalFocusTime.value,
-                label: 'Focus time',
-                color: AppColors.accentPurple,
-              ),
-              _VerticalDivider(),
-              _StatItem(
-                icon: Icons.local_fire_department,
-                value: controller.dayStreak.value.toString(),
-                label: 'Day streak',
-                color: Colors.orange,
-              ),
-              _VerticalDivider(),
-              _StatItem(
-                icon: Icons.check_circle,
-                value: controller.allSessions.length.toString(),
-                label: 'All sessions',
-                color: Colors.green,
-              ),
-            ],
-          )),
+          Obx(
+            () => Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _StatItem(
+                  icon: Icons.access_time_filled,
+                  value: controller.totalFocusTime.value,
+                  label: 'Focus time',
+                  color: AppColors.primary,
+                ),
+                _VerticalDivider(),
+                _StatItem(
+                  icon: Icons.local_fire_department,
+                  value: controller.dayStreak.value.toString(),
+                  label: 'Day streak',
+                  color: Colors.orange,
+                ),
+                _VerticalDivider(),
+                _StatItem(
+                  icon: Icons.check_circle,
+                  value: '0',
+                  label: 'All sessions',
+                  color: Colors.green,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -79,10 +78,7 @@ class _StatItem extends StatelessWidget {
             value,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 11, color: Colors.grey),
-          ),
+          Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         ],
       ),
     );
@@ -95,7 +91,7 @@ class _VerticalDivider extends StatelessWidget {
     return Container(
       height: 40,
       width: 1,
-      color: Colors.grey.withOpacity(0.2),
+      color: Colors.grey.withValues(alpha: 0.2),
     );
   }
 }

@@ -15,7 +15,7 @@ class OnboardingView extends GetView<AuthorizationController> {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-          gradient: AppColors.backgroundGradient(isDark),
+          color: AppColors.flat(isDark),
         ),
         child: SafeArea(
           child: Padding(
@@ -29,20 +29,20 @@ class OnboardingView extends GetView<AuthorizationController> {
                 Container(
                   padding: const EdgeInsets.all(24),
                   decoration: BoxDecoration(
-                    color: AppColors.accentPurple.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: const Icon(
-                    Icons.nights_stay_rounded,
+                    Icons.school_rounded,
                     size: 80,
-                    color: AppColors.accentPurple,
+                    color: AppColors.primary,
                   ),
                 ),
                 
                 const SizedBox(height: 48),
                 
                 Text(
-                  'FocusFlow',
+                  'Daris',
                   style: Theme.of(context).textTheme.headlineLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: isDark ? Colors.white : Colors.black87,
@@ -66,7 +66,7 @@ class OnboardingView extends GetView<AuthorizationController> {
                       padding: const EdgeInsets.only(bottom: 16.0),
                       child: Text(
                         controller.errorMessage.value!,
-                        style: const TextStyle(color: AppColors.accentRed),
+                        style: const TextStyle(color: AppColors.error),
                         textAlign: TextAlign.center,
                       ),
                     )

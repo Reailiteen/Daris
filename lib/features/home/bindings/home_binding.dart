@@ -3,15 +3,25 @@ import '../controller/home_controller.dart';
 import '../../app_selection/controller/app_selection_controller.dart';
 import '../../statistics/controller/statistics_controller.dart';
 import '../../website_blocking/controller/website_blocking_controller.dart';
-import '../../activities/controller/activity_controller.dart';
+import '../../settings/controller/settings_controller.dart';
+import '../../subjects/controller/subjects_controller.dart';
+import '../../balance/controller/balance_controller.dart';
+import '../../tasks/controller/tasks_controller.dart';
+import '../../ai_questions/controller/ai_questions_controller.dart';
+import '../../screen_time/controller/screen_time_health_controller.dart';
 
 class HomeBinding extends Bindings {
   @override
   void dependencies() {
-    Get.lazyPut<HomeController>(() => HomeController());
-    Get.lazyPut<AppSelectionController>(() => AppSelectionController());
-    Get.lazyPut<StatisticsController>(() => StatisticsController());
-    Get.lazyPut<WebsiteBlockingController>(() => WebsiteBlockingController());
-    Get.lazyPut<ActivityController>(() => ActivityController());
+    Get.put<HomeController>(HomeController());
+    Get.put<AppSelectionController>(AppSelectionController());
+    Get.put<StatisticsController>(StatisticsController());
+    Get.put<WebsiteBlockingController>(WebsiteBlockingController());
+    Get.put<SettingsController>(SettingsController());
+    Get.put<BalanceController>(BalanceController());
+    Get.put<TasksController>(TasksController());
+    Get.put<SubjectsController>(SubjectsController());
+    Get.put<AIQuestionsController>(AIQuestionsController());
+    Get.put<ScreenTimeHealthController>(ScreenTimeHealthController());
   }
 }

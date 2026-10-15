@@ -17,64 +17,104 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
     /// Called when a monitored activity interval starts
     override func intervalDidStart(for activity: DeviceActivityName) {
         super.intervalDidStart(for: activity)
-        
         print("DeviceActivityMonitor: Interval started for \(activity.rawValue)")
-        
-        // CRITICAL: Check for emergency unblock BEFORE applying shields
-        // This ensures FocusFlow is never blocked
+
+        if activity.rawValue == "screenTimeUsage" {
+            // Screen time credit — do NOT apply shields.
+            // Apps were already unblocked by the main app. We just track usage via events.
+            return
+        }
+
+        // Focus session — apply shields
         emergencyUnblockIfNeeded()
-        
-        // Load the saved selection and apply shields
         if let selection = loadSelection() {
             applyShields(for: selection)
         }
-        
-        // Check again after applying shields
         emergencyUnblockIfNeeded()
-        
-        // Send notification
         sendNotification(title: "Focus Session Started", body: "Stay focused! Distracting apps are now blocked.")
     }
     
     /// Called when a monitored activity interval ends
     override func intervalDidEnd(for activity: DeviceActivityName) {
         super.intervalDidEnd(for: activity)
-        
         print("DeviceActivityMonitor: Interval ended for \(activity.rawValue)")
-        
-        // Remove all shields
-        removeAllShields()
-        
-        // Send completion notification
+
+        if activity.rawValue == "screenTimeUsage" {
+            // Screen time credit exhausted — re-block apps
+            if let selection = loadSelection() {
+                applyShields(for: selection)
+            }
+            if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
+                sharedDefaults.set(false, forKey: "screenTimeSessionActive")
+                sharedDefaults.set(0, forKey: "screenTimeBalanceMinutes")
+            }
+            sendNotification(
+                title: "Screen Time Used Up",
+                body: "Your earned screen time has ended. Study more to earn more!"
+            )
+            return
+        }
+
+        // Focus session ended — keep shields in place (apps stay blocked by default).
+        // User needs screen time credit to unblock.
         sendNotification(title: "Focus Session Complete! 🎉", body: "Great job! Your focus session has ended.")
-        
-        // Update session state
         markSessionComplete()
     }
-    
-    /// Called when a usage threshold is reached
+
+    /// Called when a usage threshold is reached.
+    /// For screen time sessions, each "st_min_N" event = N minutes of actual blocked-app usage.
     override func eventDidReachThreshold(_ event: DeviceActivityEvent.Name, activity: DeviceActivityName) {
         super.eventDidReachThreshold(event, activity: activity)
-        
         print("DeviceActivityMonitor: Event threshold reached - \(event.rawValue)")
-        
-        // Could be used for break reminders or warnings
+
+        guard activity.rawValue == "screenTimeUsage",
+              event.rawValue.hasPrefix("st_min_"),
+              let minuteUsed = Int(event.rawValue.dropFirst("st_min_".count)) else { return }
+
+        guard let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) else { return }
+
+        let balance = sharedDefaults.integer(forKey: "screenTimeBalanceMinutes")
+        sharedDefaults.set(minuteUsed, forKey: "screenTimeMinutesUsed")
+
+        print("DeviceActivityMonitor: Screen time used \(minuteUsed)/\(balance) min")
+
+        if minuteUsed >= balance {
+            // Balance exhausted — re-block and shut down
+            if let selection = loadSelection() {
+                applyShields(for: selection)
+            }
+            sharedDefaults.set(false, forKey: "screenTimeSessionActive")
+            sendNotification(
+                title: "Screen Time Used Up",
+                body: "Your earned screen time has ended. Study more to earn more!"
+            )
+        } else if balance - minuteUsed == 5 {
+            sendNotification(
+                title: "Screen Time Ending Soon ⏰",
+                body: "You have 5 minutes of screen time left."
+            )
+        }
     }
-    
-    /// Called when there's a warning before interval ends
+
+    /// Called when there's a warning before interval starts
     override func intervalWillStartWarning(for activity: DeviceActivityName) {
         super.intervalWillStartWarning(for: activity)
-        
         print("DeviceActivityMonitor: Interval will start warning for \(activity.rawValue)")
     }
-    
+
     /// Called as warning before interval ends
     override func intervalWillEndWarning(for activity: DeviceActivityName) {
         super.intervalWillEndWarning(for: activity)
-        
         print("DeviceActivityMonitor: Interval will end warning for \(activity.rawValue)")
-        
-        // Send warning notification
+
+        if activity.rawValue == "screenTimeUsage" {
+            sendNotification(
+                title: "Screen Time Ending Soon ⏰",
+                body: "You have ~5 minutes of screen time credit left."
+            )
+            return
+        }
+
         sendNotification(title: "Session Ending Soon", body: "Your focus session will end in a few minutes.")
     }
     
@@ -161,21 +201,8 @@ class DeviceActivityMonitorExtension: DeviceActivityMonitor {
                 }
             }
             
-            // Additional safeguard: If blocking has been active for more than 30 minutes,
-            // automatically unblock as a safety measure (prevents permanent lock)
-            if let sharedDefaults = UserDefaults(suiteName: appGroupIdentifier) {
-                if let lastBlockTime = sharedDefaults.object(forKey: "lastBlockTime") as? Date {
-                    let timeSinceBlock = Date().timeIntervalSince(lastBlockTime)
-                    // If blocked for more than 30 minutes, unblock as safety measure
-                    if timeSinceBlock > 1800 { // 30 minutes
-                        print("DeviceActivityMonitor: ⚠️ SAFETY TIMEOUT - Blocking active for >30min. Auto-unblocking.")
-                        removeAllShields()
-                    }
-                } else {
-                    // If no lastBlockTime is set but blocking is active, set it now
-                    sharedDefaults.set(Date(), forKey: "lastBlockTime")
-                }
-            }
+            // NOTE: 30-minute auto-unblock removed — persistent blocking is intentional.
+            // The emergency flag mechanism above is sufficient for self-lock protection.
         }
     }
     

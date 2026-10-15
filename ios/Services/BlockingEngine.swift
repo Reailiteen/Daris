@@ -99,7 +99,7 @@ class BlockingEngine {
         store.shield.applicationCategories = filteredSelection.categoryTokens.isEmpty ? nil : .specific(filteredSelection.categoryTokens)
         
         // Combine FamilyActivitySelection web domains with custom blocked websites
-        var combinedWebDomains = selection.webDomainTokens
+        let combinedWebDomains = selection.webDomainTokens
         
         // Note: Custom domains from BlockedWebsite list are saved for extension use
         // The ManagedSettings framework primarily works with webDomainTokens from FamilyActivitySelection

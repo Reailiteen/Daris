@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../../core/theme/app_theme.dart';
 import '../controller/statistics_controller.dart';
-import '../../../data/models/session_statistic.dart';
 
 class StatisticsView extends GetView<StatisticsController> {
   const StatisticsView({super.key});
@@ -15,7 +14,7 @@ class StatisticsView extends GetView<StatisticsController> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: AppColors.backgroundGradient(isDark),
+        color: AppColors.flat(isDark),
       ),
       child: SafeArea(
         child: SingleChildScrollView(
@@ -50,22 +49,19 @@ class StatisticsView extends GetView<StatisticsController> {
     return Container(
       height: 250,
       padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(24),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceAround,
           maxY: 60,
           barGroups: [
-            _makeGroupData(0, 15, AppColors.accentTeal),
-            _makeGroupData(1, 30, AppColors.accentBlue),
-            _makeGroupData(2, 45, AppColors.accentPurple),
-            _makeGroupData(3, 20, AppColors.accentTeal),
-            _makeGroupData(4, 55, AppColors.accentBlue),
-            _makeGroupData(5, 30, AppColors.accentPurple),
-            _makeGroupData(6, 10, AppColors.accentTeal),
+            _makeGroupData(0, 15, AppColors.success),
+            _makeGroupData(1, 30, AppColors.primaryLight),
+            _makeGroupData(2, 45, AppColors.primary),
+            _makeGroupData(3, 20, AppColors.success),
+            _makeGroupData(4, 55, AppColors.primaryLight),
+            _makeGroupData(5, 30, AppColors.primary),
+            _makeGroupData(6, 10, AppColors.success),
           ],
           gridData: const FlGridData(show: false),
           borderData: FlBorderData(show: false),
@@ -115,7 +111,7 @@ class StatisticsView extends GetView<StatisticsController> {
             title: 'Avg. Daily',
             value: '0 min',
             icon: Icons.timer,
-            color: AppColors.accentBlue,
+            color: AppColors.primary,
           ),
         ),
       ],
@@ -123,14 +119,7 @@ class StatisticsView extends GetView<StatisticsController> {
   }
 
   Widget _buildHistoryList(BuildContext context, bool isDark) {
-    return Obx(() {
-      if (controller.allSessions.isEmpty) {
-        return const Center(child: Text('No sessions recorded', style: TextStyle(color: Colors.grey)));
-      }
-      return Column(
-        children: controller.allSessions.map((s) => _HistoryItem(session: s)).toList(),
-      );
-    });
+    return const Center(child: Text('No sessions recorded', style: TextStyle(color: Colors.grey)));
   }
 }
 
@@ -152,10 +141,7 @@ class _InfoCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Container(
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(20),
-      ),
+      decoration: DarisDecorations.card(isDark),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -169,40 +155,3 @@ class _InfoCard extends StatelessWidget {
   }
 }
 
-class _HistoryItem extends StatelessWidget {
-  final SessionStatistic session;
-
-  const _HistoryItem({required this.session});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDark ? Colors.white.withOpacity(0.05) : Colors.white.withOpacity(0.7),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Row(
-        children: [
-          Icon(
-            session.completedSuccessfully ? Icons.check_circle : Icons.cancel,
-            color: session.completedSuccessfully ? Colors.green : Colors.red,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(session.formattedDate, style: const TextStyle(fontWeight: FontWeight.w600)),
-                Text('${session.formattedDuration} focused', style: const TextStyle(color: Colors.grey)),
-              ],
-            ),
-          ),
-          const Icon(Icons.chevron_right, color: Colors.grey),
-        ],
-      ),
-    );
-  }
-}
